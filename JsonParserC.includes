@@ -1,0 +1,10 @@
+./include
+include
+include/driver/uart
+include/json
+JsonParserC
+.
+src/json
+unitTest/TEST_JSON/TEST_JSON_ARRAY
+unitTest/TEST_JSON/TEST_JSON_OBJECT
+include/driver
