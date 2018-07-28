@@ -24,12 +24,12 @@ void buffer_init()
     buffer_reset(&jsonTxBuf);
 }
 
-Buffer *get_uart_rx_buffer()
+Buffer *get_json_rx_buffer()
 {
     return &jsonRxBuf;
 }
 
-Buffer *get_uart_tx_buffer()
+Buffer *get_json_tx_buffer()
 {
     return &jsonTxBuf;
 }

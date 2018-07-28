@@ -352,7 +352,7 @@ Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
 EnvironmentGroup=
 Executable=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
-External Terminal=gnome-terminal --window-with-profile=KDevelop %exe -- make TEST_JSON_OBJECT_READ_EXE\s
+External Terminal=make TEST_JSON_OBJECT_READ_EXE\s
 Project Target=
 Use External Terminal=true
 Working Directory=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC

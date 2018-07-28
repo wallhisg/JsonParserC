@@ -22,7 +22,7 @@ vpath %.h $(INCLUDE_DIRS)
 # select which tools to use as compiler, 
 # librarian and linker
 #======================================================================
-CFLAGS	+= -Wall -O1
+CFLAGS	+= -std=c99 -Wall -O1
 CFLAGS	+= -Os -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CFLAGS	+= $(addprefix -I , $(INCLUDE_DIRS))
 #======================================================================
@@ -79,7 +79,7 @@ TEST_JSON_OBJECT_READ_EXE:
 	@./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/TEST_JSON_OBJECT_READ_EXE
 # TEST MEM	
 mem_program: $(PROGRAMS)
-	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no $(PROGRAMS)
+	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no ./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/TEST_JSON_OBJECT_READ_EXE
 	
 mem_test: $(TEST_HANDLE_EVENT)
 	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no $(TEST_HANDLE_EVENT)	

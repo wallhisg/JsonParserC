@@ -11,8 +11,8 @@ void uart_rx_parser();
 
 void uart_tx_isr(char data);
 
-Buffer *get_uart_rx_buffer();
-Buffer *get_uart_tx_buffer();
+Buffer *get_json_rx_buffer();
+Buffer *get_json_tx_buffer();
 
 
 

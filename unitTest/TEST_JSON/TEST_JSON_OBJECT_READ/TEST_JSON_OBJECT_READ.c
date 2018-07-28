@@ -22,7 +22,7 @@ void TEST_JSON_OBJECT_READ(char *bytesWrite)
 {
     printf("--- TEST_JSON_OBJECT_READ ---\r\n");
     memset(buffer, 0, MAX_NO_OF_BUFFER);
-    Buffer *rxBuf = get_uart_rx_buffer();
+    Buffer *rxBuf = get_json_rx_buffer();
     
     uint8_t bytesWritten = strlen(bytesWrite);
 
@@ -42,35 +42,29 @@ void TEST_JSON_OBJECT_READ(char *bytesWrite)
     
     // parser json object
     JsonType jsonType = get_json_type(rxBuf);
+
     
     if(jsonType == JSON_TYPE_OBJECT)
     {
+        JsonConsume consume;
+        json_consume_init(&consume);
         printf("Json type : %d\r\n", jsonType);
         Buffer *buff = get_json_buffer();
-//         if(json_object_read_description(buff))
-        {
-            read_key_value(buff);
-//             json_object_read_description(buff);
-//             json_object_read_description_value(buff);
-//             json_object_read_description(buff);
-//             json_object_read_description_value(buff);
-//             json_object_read_description(buff);
-//             json_object_read_description_value(buff);
-/*            json_object_read_description(buff);
-            json_object_read_description_value(buff); */           
-
-        }
-//         else
-        {
-//             error("PARSER OBJECT FALSE\r\n");
-        }
+        consume = read_json_key(buff, &consume);
+        consume = read_json_value(buff, &consume);
     }   
     else if(jsonType == JSON_TYPE_ARRAY)
     {
-                printf("Json type : %d\r\n", jsonType);
+        
+        printf("Json type : %d\r\n", jsonType);
         Buffer *buff = get_json_buffer();
-//         if(json_object_read_description(buff))
-            read_key_value(buff);
+        JsonConsume consume;
+        json_consume_init(&consume);
+        read_json_key(buff, &consume);
+        read_json_value(buff, &consume);
+        read_json_key(buff, &consume);
+        read_json_value(buff, &consume);
+//         read_key_value(buff);
     }
     else
         error("PARSER FALSE\r\n");
@@ -86,14 +80,14 @@ int main()
 //     char *obj1 = "{\"d\":\"1\",\"b\":\"2\"}\r\n";
 //     TEST_JSON_OBJECT_READ(obj1);
 
-//     char *obj2 = "{\"A\":{\"XX\":\"12\",\"YY\":\"12\"},\"V\":{\"Z\":\"12\"}}\r\n";
-//     TEST_JSON_OBJECT_READ(obj2);
+     char *obj2 = "{\"A\":{\"X\":\"2\",\"Y\":\"2\"},\"V\":{\"Z\":\"12\"}}\r\n";
+     TEST_JSON_OBJECT_READ(obj2);
     
     char *bytesWrite2 = "{\"a\":[\"X\",\"Y\",\"Z\"],\"b\":\"1\"}\r\n";
     TEST_JSON_OBJECT_READ(bytesWrite2);
 // 
-//     char *obj3 = "{\"a\":{\"X\":\"1\",\"Y\":\"1\"},\"b\":\"1\"}\r\n";
-//     TEST_JSON_OBJECT_READ(obj3);
+     char *obj3 = "{\"a\":{\"X\":\"1\",\"Y\":\"1\"},\"b\":\"1\"}\r\n";
+     TEST_JSON_OBJECT_READ(obj3);
 
     
     return 0;

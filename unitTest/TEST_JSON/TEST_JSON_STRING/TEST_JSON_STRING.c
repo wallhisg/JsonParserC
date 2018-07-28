@@ -13,7 +13,7 @@ void TEST_JSON_STRING()
 {
     printf("--- TEST_JSON_STRING ---\r\n");
     memset(buffer, 0, MAX_NO_OF_BUFFER);
-    Buffer *rxBuf = get_uart_rx_buffer();
+    Buffer *rxBuf = get_json_rx_buffer();
     
     // init value to write
     char *bytesWrite = "\"abcdef123\"\r\n";

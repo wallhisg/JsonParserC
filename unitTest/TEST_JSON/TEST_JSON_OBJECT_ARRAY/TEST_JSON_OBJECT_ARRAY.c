@@ -12,7 +12,7 @@ void TEST_JSON_OBJECT(char *bytesWrite)
 {
     printf("--- TEST_JSON_OBJECT ---\r\n");
     memset(buffer, 0, MAX_NO_OF_BUFFER);
-    Buffer *rxBuf = get_uart_rx_buffer();
+    Buffer *rxBuf = get_json_rx_buffer();
     
     uint8_t bytesWritten = strlen(bytesWrite);
 
