@@ -1,4 +1,5 @@
 #include <string.h>
+#include <json/json_parser.h>
 #include <json/json_parser_object.h>
 
 JsonConsume tok_obj_letter_start(const char c, JsonConsume *objConsume);
@@ -98,14 +99,38 @@ JsonConsume tok_obj_letter_start(const char c, JsonConsume *objConsume)
     switch (c) {
         case '\"' :
         {
-            consume->nextTok = (void *)tok_obj_dq_mark;
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
+                consume->nextTok = (void *)tok_obj_dq_mark;
+                consume->tribool = TRIBOOL_INDETERMINATE;
+                consume->state = next_json_object_state(consume->state);
+            }
+            else
+            {
+                consume->nextTok = (void *)tok_dq_mark;
+                consume->tribool = TRIBOOL_INDETERMINATE;
+                consume->type = JSON_TYPE_STRING;
+            }
+            break;
+        }
+        case '{': {
+            consume->nextTok = (void *)tok_l_curly;
             consume->tribool = TRIBOOL_INDETERMINATE;
-            consume->state = next_json_object_state(consume->state);
+            consume->type = JSON_TYPE_OBJECT;
+            consume->counter++;
             break;
         }
         default:
         {
-            consume->tribool = TRIBOOL_FALSE;
+            if ((c == LF) || (c == CR) || (c == '\0'))
+            {
+                consume->tribool = TRIBOOL_INDETERMINATE;
+                consume->type = JSON_TYPE_UNDEFINED;
+                consume->nextTok = (void *)tok_letter_start;
+            }
+            else
+                consume->tribool = TRIBOOL_FALSE;
+            
             break;
         }
     }
@@ -123,45 +148,84 @@ JsonConsume tok_obj_dq_mark(const char c, JsonConsume *objConsume)
         case ':' :
         {
             consume->nextTok = (void *)tok_obj_colon;
-            if(consume->isObjects)
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
             {
-                consume->tribool = TRIBOOL_TRUE;
+                if(consume->isObjects) {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+                else {
+                    consume->state = next_json_object_state(consume->state);
+                    consume->tribool = TRIBOOL_INDETERMINATE;
+                }
             }
-            else
-            {
-                consume->state = next_json_object_state(consume->state);
-                consume->tribool = TRIBOOL_INDETERMINATE;
+            else {
+                            consume->nextTok = (void *)tok_colon;
+            consume->tribool = TRIBOOL_TRUE;
             }
+
             break;
         }
-        case ',':
-        {
+        case ',': {
             consume->nextTok = (void *)tok_obj_comma;
-            if(consume->isObjects)
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
             {
+                
+                if(consume->isObjects)
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+                else
+                {
+                    consume->state = next_json_object_state(consume->state);
+                    consume->tribool = TRIBOOL_INDETERMINATE;
+                }
+            }
+            else {
+                consume->nextTok = (void *)tok_comma;
                 consume->tribool = TRIBOOL_TRUE;
             }
-            else
-            {
-                consume->state = next_json_object_state(consume->state);
-                consume->tribool = TRIBOOL_INDETERMINATE;
-            }
+                
             break;
         }
         case '}':
         {
             consume->nextTok = (void *)tok_obj_r_curly;
-            consume->state = next_json_object_state(consume->state);
-            consume->tribool = TRIBOOL_INDETERMINATE;
-            consume->isObjects = false;
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
+                consume->state = next_json_object_state(consume->state);
+                consume->tribool = TRIBOOL_INDETERMINATE;
+                consume->isObjects = false;
+            }
+            else
+            {
+                consume->counter--;
+
+                if(consume->isObjects)
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                    consume->isObjects = false;
+                }
+                else
+                    consume->tribool = TRIBOOL_INDETERMINATE;
+            }
             break;
         }
         case ']' :
         {
-            consume->nextTok = (void *)tok_obj_r_bracket;
-            consume->state = next_json_object_state(consume->state);
-            consume->tribool = TRIBOOL_INDETERMINATE;
-            consume->isObjects = false;
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
+                consume->nextTok = (void *)tok_obj_r_bracket;
+                consume->state = next_json_object_state(consume->state);
+                consume->tribool = TRIBOOL_INDETERMINATE;
+                consume->isObjects = false;
+
+            }
+            else {
+                consume->nextTok = (void *)tok_r_bracket;
+                consume->isObjects = false;
+                consume->tribool = TRIBOOL_TRUE;
+                consume->counter--;
+            }
             break;
         }
         case '\0':
@@ -174,17 +238,36 @@ JsonConsume tok_obj_dq_mark(const char c, JsonConsume *objConsume)
         }
         default:
         {
-            if(isalpha(c) || isdigit(c))
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
             {
-                consume->nextTok = (void *)tok_obj_letter;
-                consume->tribool = TRIBOOL_TRUE;
-                if(consume->state == JSON_OBJECT_KEY)
-                    consume->state = JSON_OBJECT_KEY_BEGIN;
-                else if(consume->state == JSON_OBJECT_VALUE)
-                    consume->state = JSON_OBJECT_VALUE_BEGIN;
+
+                if(isalpha(c) || isdigit(c))
+                {
+                    consume->nextTok = (void *)tok_obj_letter;
+                    consume->tribool = TRIBOOL_TRUE;
+                    if(consume->state == JSON_OBJECT_KEY)
+                        consume->state = JSON_OBJECT_KEY_BEGIN;
+                    else if(consume->state == JSON_OBJECT_VALUE)
+                        consume->state = JSON_OBJECT_VALUE_BEGIN;
+                }
+                else {
+                    consume->tribool = TRIBOOL_FALSE;
+                }
             }
             else {
-                consume->tribool = TRIBOOL_FALSE;
+                if (isalpha(c) || isdigit(c))
+                {
+                    consume->nextTok = (void *)tok_letter;
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+                else if ((c == '\0') || (c == '\r') || (c == '\n'))
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+                else
+                {
+                    consume->tribool = TRIBOOL_FALSE;
+                }
             }
 
 
@@ -201,36 +284,65 @@ JsonConsume tok_obj_colon(const char c, JsonConsume *objConsume)
     debug_message("tok_obj_colon");
 
     JsonConsume *consume = objConsume;
-
+    
     switch (c) {
         case '\"' :
         {
             consume->nextTok = (void *)tok_obj_dq_mark;
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
 
-            if(consume->isObjects)
-            {
-                consume->tribool = TRIBOOL_TRUE;
+                if(consume->isObjects)
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+                else
+                {
+                    consume->tribool = TRIBOOL_INDETERMINATE;
+                }
             }
-            else
-            {
-                consume->tribool = TRIBOOL_INDETERMINATE;
+            else {
+                consume->nextTok = (void *)tok_dq_mark;
+                consume->tribool = TRIBOOL_TRUE;
             }
             break;
         }
         case '{':
         {
             consume->nextTok = (void *)tok_obj_l_curly;
-            consume->isObjects = true;
-            consume->state = next_json_object_state(consume->state);
-            consume->tribool = TRIBOOL_INDETERMINATE;
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
+                consume->isObjects = true;
+                consume->state = next_json_object_state(consume->state);
+                consume->tribool = TRIBOOL_INDETERMINATE;
+
+            }
+            else {
+                consume->isObjects = true;
+                consume->nextTok = (void *)tok_l_curly;
+                consume->tribool = TRIBOOL_TRUE;
+                consume->counter++;
+            }
             break;
         }
         case '[' :
         {
             consume->nextTok = (void *)tok_obj_l_bracket;
-            consume->isObjects = true;
-            consume->state = next_json_object_state(consume->state);
-            consume->tribool = TRIBOOL_INDETERMINATE;
+
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
+
+                consume->isObjects = true;
+                consume->state = next_json_object_state(consume->state);
+                consume->tribool = TRIBOOL_INDETERMINATE;
+            }
+            else {
+                consume->nextTok = (void *)tok_l_bracket;
+                consume->tribool = TRIBOOL_TRUE;
+                consume->type = JSON_TYPE_ARRAY;
+                consume->isObjects = true;
+                consume->counter++;
+            }
             break;
         }
         default:
@@ -249,19 +361,27 @@ JsonConsume tok_obj_comma(const char c, JsonConsume *objConsume)
     debug_message("tok_obj_comma");
 
     JsonConsume *consume = objConsume;
-
+    
     switch (c) {
         case '\"' :
         {
             consume->nextTok = (void *)tok_obj_dq_mark;
-            if(consume->isObjects)
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
             {
-                consume->tribool = TRIBOOL_TRUE;
+
+                if(consume->isObjects)
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+                else
+                {
+                    consume->state = next_json_object_state(consume->state);
+                    consume->tribool = TRIBOOL_INDETERMINATE;
+                }
             }
-            else
-            {
-                consume->state = next_json_object_state(consume->state);
-                consume->tribool = TRIBOOL_INDETERMINATE;
+            else {
+                consume->nextTok = (void *)tok_dq_mark;
+                consume->tribool = TRIBOOL_TRUE;
             }
             break;
         }
@@ -281,13 +401,21 @@ JsonConsume tok_obj_l_curly(const char c, JsonConsume *objConsume)
     debug_message("tok_obj_l_curly");
 
     JsonConsume *consume = objConsume;
-
+    
     switch (c) {
         case '\"' :
         {
             consume->nextTok = (void *)tok_obj_dq_mark;
-            if(consume->isObjects)
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
             {
+
+                if(consume->isObjects)
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+            }
+            else {
+                consume->nextTok = (void *)tok_dq_mark;
                 consume->tribool = TRIBOOL_TRUE;
             }
             break;
@@ -308,14 +436,37 @@ JsonConsume tok_obj_r_curly(const char c, JsonConsume *objConsume)
     debug_message("tok_obj_r_curly");
 
     JsonConsume *consume = objConsume;
-
+    
     switch (c) {
         case ',' :
         {
-            consume->nextTok = (void *)tok_obj_comma;
-            consume->isObjects = false;
-            consume->tribool = TRIBOOL_INDETERMINATE;
-            consume->state = next_json_object_state(consume->state);
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
+                consume->nextTok = (void *)tok_obj_comma;
+                consume->isObjects = false;
+                consume->tribool = TRIBOOL_INDETERMINATE;
+                consume->state = next_json_object_state(consume->state);
+
+            }
+            else {
+                consume->nextTok = (void *)tok_comma;
+                consume->tribool = TRIBOOL_TRUE;
+            }
+            break;
+        }
+        case '}':
+        {
+            consume->nextTok = (void *)tok_r_curly;
+            consume->counter--;
+
+            if (consume->counter > 1)
+            {
+                consume->tribool = TRIBOOL_TRUE;
+            }
+            else
+            {
+                consume->tribool = TRIBOOL_INDETERMINATE;
+            }
             break;
         }
         case '\0':
@@ -342,13 +493,22 @@ JsonConsume tok_obj_l_bracket(const char c, JsonConsume *objConsume)
     debug_message("tok_obj_l_bracket");
 
     JsonConsume *consume = objConsume;
-
+    
     switch (c) {
         case '\"' :
         {
-            consume->nextTok = (void *)tok_obj_dq_mark;
-            if(consume->isObjects)
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
             {
+                consume->nextTok = (void *)tok_obj_dq_mark;
+                if(consume->isObjects)
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+
+            }
+            else {
+                consume->nextTok = (void *)tok_dq_mark;
+                consume->isObjects = true;
                 consume->tribool = TRIBOOL_TRUE;
             }
             break;
@@ -369,7 +529,7 @@ JsonConsume tok_obj_r_bracket(const char c, JsonConsume *objConsume)
     debug_message("tok_obj_r_bracket");
 
     JsonConsume *consume = objConsume;
-
+    
     switch (c) {
         case '\0':
         case '\r':
@@ -382,10 +542,18 @@ JsonConsume tok_obj_r_bracket(const char c, JsonConsume *objConsume)
         }
         case ',' :
         {
-            consume->nextTok = (void *)tok_obj_comma;
-            consume->isObjects = false;
-            consume->tribool = TRIBOOL_INDETERMINATE;
-            consume->state = next_json_object_state(consume->state);
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
+            {
+                consume->nextTok = (void *)tok_obj_comma;
+                consume->isObjects = false;
+                consume->tribool = TRIBOOL_INDETERMINATE;
+                consume->state = next_json_object_state(consume->state);
+
+            }
+            else {
+                consume->nextTok = (void *)tok_comma;
+                consume->tribool = TRIBOOL_TRUE;
+            }
             break;
         }
         case '}':
@@ -411,18 +579,41 @@ JsonConsume tok_obj_letter(const char c, JsonConsume *objConsume)
 {
     debug_message("tok_obj_letter");
     JsonConsume *consume = objConsume;
-
+    
     switch (c) {
         case '\"' :
         {
-            consume->nextTok = (void *)tok_obj_dq_mark;
-            if(consume->isObjects)
+            if((consume->type == JSON_TYPE_OBJECT) || (consume->type == JSON_TYPE_ARRAY))
             {
+                consume->nextTok = (void *)tok_obj_dq_mark;
+                if(consume->isObjects)
+                {
+                    consume->tribool = TRIBOOL_TRUE;
+                }
+                else
+                {
+                    consume->state = next_json_object_state(consume->state);
+                }
+
+            }
+            else if (consume->type == JSON_TYPE_STRING)
+            {
+                consume->nextTok = (void *)tok_dq_mark;
+                consume->tribool = TRIBOOL_INDETERMINATE;
+            }
+            else if (consume->type == JSON_TYPE_OBJECT)
+            {
+                consume->nextTok = (void *)tok_dq_mark;
                 consume->tribool = TRIBOOL_TRUE;
             }
-            else
+            else if (consume->type == JSON_TYPE_ARRAY)
             {
-                consume->state = next_json_object_state(consume->state);
+                consume->nextTok = (void *)tok_dq_mark;
+                consume->tribool = TRIBOOL_TRUE;
+            }
+            else {
+                consume->nextTok = (void *)tok_dq_mark;
+                consume->tribool = TRIBOOL_INDETERMINATE;
             }
             break;
         }

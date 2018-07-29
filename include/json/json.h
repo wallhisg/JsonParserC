@@ -20,7 +20,7 @@
 #define MSG_TYPE_JSON_OBJECT    0x82
 #define MSG_TYPE_JSON_ARRAY     0x83
 
-#define MAX_NO_OF_JSON_BUFFER       64
+#define MAX_NO_OF_JSON_BUFFER       128
 #define JSON_OBJECT_KEY_LENGTH      64
 #define JSON_OBJECT_VALUE_LENGTH    64
 

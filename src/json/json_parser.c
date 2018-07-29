@@ -1,26 +1,16 @@
 #include <json/json_parser.h>
+#include <json/json_parser_object.h>
 
-JsonConsume tok_letter_start(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_l_curly(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_r_curly(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_l_bracket(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_r_bracket(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_colon(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_comma(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_dq_mark(const char c, JsonConsume *jsonConsume);
-JsonConsume tok_letter(const char c, JsonConsume *jsonConsume);
 
-JsonType get_json_type(Buffer *inBuff)
+JsonConsume get_json_type(Buffer *inBuff, JsonConsume *jsonConsume)
 
 {
     debug_json("BUFFER SIZE %d\r\n", inBuff->size);
+    jsonConsume->nextTok = (void *)tok_letter_start;
 
     Buffer *jsonBuff = get_json_buffer();
-    
 	JsonConsume consume;
-    json_consume_init(&consume);
-    consume.nextTok = (void *)tok_letter_start;
-
+    int counter = 0;
     char byte;
     int i = 0;
     for(i = 0; i < inBuff->size; i++)
@@ -28,13 +18,15 @@ JsonType get_json_type(Buffer *inBuff)
         // process array char from buffer
         byte = buffer_read_one_byte(inBuff);
 
-        consume = consume_char(byte, &consume);
+        consume = consume_object(byte, jsonConsume);
 
         if(consume.tribool == TRIBOOL_TRUE)
         {
             if(jsonBuff->status != RING_STATUS_FULL)
             {
                 write_one_byte_to_json_buffer(byte);
+                counter++;
+                
             }
             else
             {
@@ -59,11 +51,12 @@ JsonType get_json_type(Buffer *inBuff)
         // end block; end of json frame \n
         if(byte == LF)
         {
-            consume.counter = i;
+            counter++;
+            consume.counter = counter;
             break;
         }
     }
-    return consume.type;
+    return consume;
 }
 
 JsonConsume consume_char(char c, JsonConsume *jsonConsume)
