@@ -8,7 +8,7 @@ TESTS		:=
 #======================================================================
 # MODULES
 MODULES		:= src/system src/driver src/json 
-MODULES		+= 
+MODULES		+= unitTest/
 # LIBS
 MODULES		+=
 # APP
@@ -45,9 +45,9 @@ include ./JsonParserC/xmodule.mk
 # Unit test
 
 # JSON
-#include ./unitTest/TEST_JSON/TEST_JSON_STRING/xmodule.mk
-#include ./unitTest/TEST_JSON/TEST_JSON_OBJECT/xmodule.mk
-#include ./unitTest/TEST_JSON/TEST_JSON_ARRAY/xmodule.mk
+include ./unitTest/TEST_JSON/TEST_JSON_STRING/xmodule.mk
+include ./unitTest/TEST_JSON/TEST_JSON_OBJECT/xmodule.mk
+include ./unitTest/TEST_JSON/TEST_JSON_ARRAY/xmodule.mk
 #include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/xmodule.mk
 

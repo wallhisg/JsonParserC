@@ -1,36 +1,9 @@
 #include <driver/ring_buffer.h>
 #include <json/json.h>
 #include <json/json_parser.h>
-#include <json/json_parser_object.h>
 #include <json/json_reader.h>
+#include "../../json_test_func.h"
 
-extern JsonConsume tok_obj_letter_start(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_dq_mark(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_colon(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_comma(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_letter(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_l_curly(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_r_curly(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_l_bracket(const char c, JsonConsume objConsume);
-extern JsonConsume tok_obj_r_bracket(const char c, JsonConsume objConsume);
-
-
-void WRITE_TO_BUFFER(char *bytesWrite)
-{
-    printf("--- WRITE_TO_BUFFER ---\r\n");
-    
-    Buffer *rxBuff = get_json_rx_buffer();
-    uint8_t bytesWritten = strlen(bytesWrite);
-    
-    char byte;
-    int i = 0;
-    for(i = 0; i < bytesWritten; ++i)
-    {
-        byte = bytesWrite[i];
-        buffer_write_one_byte(rxBuff, byte);
-    }
-    printf("buffer_bytes_used: %d\r\n", buffer_bytes_used(rxBuff));
-}
 
 void TEST_JSON_OBJECT_READ()
 {
@@ -131,7 +104,7 @@ void TEST_JSON_OBJECT_READ_TRUE()
     
     // String
     char *strWrite = "\"abcdef123\"\r\n";
-//     WRITE_TO_BUFFER(strWrite);
+    WRITE_TO_BUFFER(strWrite);
     
     // Object
      char *objWrite = "{\"A\":{\"X\":\"2\",\"Y\":\"2\"},\"V\":{\"Z\":\"12\"}}\n";
@@ -145,7 +118,7 @@ void TEST_JSON_OBJECT_READ_TRUE()
 }
 int main()
 {
-//     TEST_JSON_OBJECT_READ_FALSE();
+    TEST_JSON_OBJECT_READ_FALSE();
     TEST_JSON_OBJECT_READ_TRUE();
     
     return 0;

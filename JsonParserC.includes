@@ -10,3 +10,4 @@ unitTest/TEST_JSON/TEST_JSON_OBJECT
 include/driver
 unitTest/TEST_JSON/TEST_JSON_OBJECT_READ
 src/driver
+unitTest

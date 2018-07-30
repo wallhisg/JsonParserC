@@ -35,5 +35,6 @@ const uint16_t buffer_bytes_used(const Buffer *buff);
 const uint16_t buffer_size_get(const Buffer *buff);
 const BufferStatus get_buffer_status(Buffer *buff);
 void consume_buffer(Buffer *buff, char ctrlChar);
+void print_buffer(Buffer *buff);
 
 #endif // RING_BUFFER_H

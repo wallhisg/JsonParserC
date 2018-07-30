@@ -135,6 +135,7 @@ const BufferStatus get_buffer_status(Buffer *buff)
 // Loop to get char out of buffer until met ctrlChar
 void consume_buffer(Buffer *buff, char ctrlChar)
 {
+    printf("consume_buffer\r\n");
     char byte;
     while(buff->status != RING_STATUS_EMPTY)
     {
@@ -143,3 +144,14 @@ void consume_buffer(Buffer *buff, char ctrlChar)
             break;
     }
 }
+
+void print_buffer(Buffer *buff)
+{
+    int i = 0;
+    for(i = 0; i < buff->size; ++i)
+    {
+        printf("%c", buff->buffer[i]);
+    }
+    printf("\r\n");
+}
+
