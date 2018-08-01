@@ -1,6 +1,8 @@
 #include "json_test_func.h"
 #include <driver/buffer.h>
 
+extern JsonConsume tok_letter_start(const char c, JsonConsume objConsume);
+
 void WRITE_TO_BUFFER(char *bytesWrite)
 {
     printf("--- WRITE_TO_BUFFER ---\r\n");
@@ -15,6 +17,8 @@ void WRITE_TO_BUFFER(char *bytesWrite)
         byte = bytesWrite[i];
         buffer_write_one_byte(rxBuff, byte);
     }
+    
+    
     printf("buffer_bytes_used: %d\r\n", buffer_bytes_used(rxBuff));    
 }
 
@@ -23,62 +27,71 @@ void JSON_TEST_CASE()
     printf("--- JSON_TEST_CASE ---\r\n");
 
     Buffer *rxBuff = get_json_rx_buffer();
+    printf("Json input string:\r\n");
+    print_buffer(rxBuff);
     
     // parser json object
     JsonConsume consume;
-    
-    while(buffer_bytes_used(rxBuff) > 0)
+    json_consume_init(&consume);
+    consume.nextTok = (void *)tok_letter_start;
+
+    int i = 0;
+    for(i = 0; i < 6; ++i)
     {
-        printf("Json input string:");
-        print_buffer(rxBuff);
-        json_consume_init(&consume);
-        consume = get_json_type(rxBuff, &consume);
-        printf("json output: \r\n");
-        
-        switch(consume.type)
+
+        consume = json_read_key(rxBuff, &consume);
+        if(consume.tribool == TRIBOOL_TRUE)
         {
-            case JSON_TYPE_STRING:
+            printf("Json %d:\r\n", i);
+            switch(consume.type)
             {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                printf("Json output string: %s\r\n", buff->buffer);
-                break;
-            }
-            case JSON_TYPE_OBJECT:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                while(consume.counter > 3)
+                case JSON_TYPE_STRING:
                 {
-                    consume = read_json_key(buff, &consume);
-                    printf("GET KEY: %s\r\n", get_json_key());
-                    consume = read_json_value(buff, &consume);
-                    printf("GET VALUE: %s\r\n", get_json_value());
+                    printf("JSON_TYPE: %d\r\n", consume.type);
+                    printf("\tKEY: %s\r\n", json_get_key());
+                    printf("\tVALUE: %s\r\n", json_get_value());
+                    break;
                 }
-                if(consume.counter > 0)
-                    consume_buffer(buff, LF);
-
-                break;
-            }
-            case JSON_TYPE_ARRAY:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                while(consume.counter > 3)
+                case JSON_TYPE_OBJECT:
                 {
-                    consume = read_json_key(buff, &consume);
-                    printf("GET KEY: %s\r\n", get_json_key());
-                    consume = read_json_value(buff, &consume);
-                    printf("GET VALUE: %s\r\n", get_json_value());
+                    printf("JSON_TYPE: %d\r\n", consume.type);
+                    printf("\tKEY: %s\r\n", json_get_key());
+                    printf("\tVALUE: %s\r\n", json_get_value());
+                    break;
                 }
-                if(consume.counter > 0)
-                    consume_buffer(buff, LF);
-
-                break;
+                case JSON_TYPE_ARRAY:
+                {
+                    printf("JSON_TYPE: %d\r\n", consume.type);
+                    printf("\tKEY: %s\r\n", json_get_key());
+                    printf("\tVALUE: %s\r\n", json_get_value());
+                    break;
+                }
+                default:
+                    break;
             }
-            default:
-                error("PARSER FALSE\r\n");
-                break;
         }
     }
+//    consume.nextTok = tok_letter_start;
+//    consume = json_read_key(rxBuff, &consume);
+//    printf("\tJSON_TYPE: %d\r\n", consume.type);
+//    printf("\tKEY: %s\r\n", json_get_key());
+//    printf("\tVALUE: %s\r\n", json_get_value());
+
+//    consume = json_read_value(rxBuff, &consume);
+
+//    consume = get_json_type(rxBuff, &consume);
+//     Buffer *buff = get_json_buffer();
+//     
+//     consume.nextTok = (void*)tok_letter_start;
+//     consume = read_json_key_value(buff, &consume);
+//     printf("JSON TYPE: %d\r\n", consume.type);
+//     printf("Key: %s\r\n", get_json_key());
+//     printf("Value: %s\r\n", get_json_value());
+// 
+//     consume = read_json_key_value(buff, &consume);
+//     printf("Key: %s\r\n", get_json_key());
+//     printf("Value: %s\r\n", get_json_value());    
+
+    
+    
 }

@@ -1,94 +1,83 @@
-#include <driver/ring_buffer.h>
+#include <driver/buffer.h>
 #include <json/json.h>
 #include <json/json_parser.h>
-#include <json/json_parser_object.h>
+#include <json/json_reader.h>
+#include "../../json_test_func.h"
 
-
-#define MAX_NO_OF_BUFFER    64
-static char buffer[MAX_NO_OF_BUFFER];
-volatile uint16_t bytesWritten = 0;
-
-void TEST_JSON_OBJECT(char *bytesWrite)
+void TEST_JSON_OBJECT_ARRAY_TRUE()
 {
-    printf("--- TEST_JSON_OBJECT ---\r\n");
-    memset(buffer, 0, MAX_NO_OF_BUFFER);
-    Buffer *rxBuff = get_json_rx_buffer();
-    
-    // parser json object
-    JsonConsume consume;
-    
-    while(buffer_bytes_used(rxBuff) > 0)
-    {
-        printf("Json input string:");
-        print_buffer(rxBuff);
-        json_consume_init(&consume);
-        consume = get_json_type(rxBuff, &consume);
-        printf("json output: \r\n");
-        
-        switch(consume.type)
-        {
-            case JSON_TYPE_STRING:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                printf("Json output string: %s\r\n", buff->buffer);
-                break;
-            }
-            case JSON_TYPE_OBJECT:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                while(consume.counter > 3)
-                {
-                    consume = read_json_key(buff, &consume);
-                    printf("GET KEY: %s\r\n", get_json_key());
-                    consume = read_json_value(buff, &consume);
-                    printf("GET VALUE: %s\r\n", get_json_value());
-                }
-                if(consume.counter > 0)
-                    consume_buffer(buff, LF);
+    printf("TEST_JSON_OBJECT_ARRAY_TRUE\r\n");
+    // init values to write
+    // Object
 
-                break;
-            }
-            case JSON_TYPE_ARRAY:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                while(consume.counter > 3)
-                {
-                    consume = read_json_key(buff, &consume);
-                    consume = read_json_value(buff, &consume);
-                }
-                if(consume.counter > 0)
-                    consume_buffer(buff, LF);
+//    char *objWrite2 = "{\"a\":\"1\",\"bc\":\"2\"}\n";
+//    WRITE_TO_BUFFER(objWrite2);
 
-                break;
-            }
-            default:
-                error("PARSER FALSE\r\n");
-                break;
-        }
-    }
+    char *objWrite3 = "{\"V\":\"12\",\"V\":{\"Z\":\"12\"},\"A\":[\"X\",\"Y\"]}\n";
+    WRITE_TO_BUFFER(objWrite3);
+
+    char *objWrite4 = "{\"V\":\"12\",\"V\":{\"Z\":\"12\"},\"A\":[\"X\",\"Y\"]}\n";
+    WRITE_TO_BUFFER(objWrite4);
+    
+    JSON_TEST_CASE();
+    Buffer *buff = get_json_buffer();
+    printf("BUFFER after value");
+    print_buffer(buff);
+    printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 
+void TEST_JSON_OBJECT_ARRAY_TRUE_2()
+{
+    printf("TEST_JSON_OBJECT_ARRAY_TRUE\r\n");
+    // init values to write
+    // Object
+
+    char *objWrite2 = "{\"name\":\"GeorgeWashington\",\"birthday\":\"February221732\",\"address\":\"MountVernonVirginiaUnitedStates\"}\n";
+    WRITE_TO_BUFFER(objWrite2);
+
+//      char *objWrite3 = "{\"V\":{\"Z\":\"12\"},\"A\":[\"X\",\"Y\"]}\n";
+//      WRITE_TO_BUFFER(objWrite3);
+// 
+//     char *objWrite4 = "{\"A\":{\"X\":\"2\",\"Y\":\"2\"},\"V\":{\"Z\":\"12\"}}\n";
+//     WRITE_TO_BUFFER(objWrite4);
+    
+    JSON_TEST_CASE();
+    Buffer *buff = get_json_buffer();
+    printf("BUFFER after value");
+    print_buffer(buff);
+    printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
+}
+void TEST_JSON_OBJECT_FALSE()
+{
+    printf("TEST_JSON_OBJECT_FALSE\r\n");
+    // init values to write
+    // Object
+    char *objWrite1 = "{\"a\":\"1\",\"bc\"1:\"2\"}\n";
+    WRITE_TO_BUFFER(objWrite1);
+
+    char *objWrite2 = "{\"A\":{\"X\":\"2\",\"Y\":\"2\"}a,\"V\":{\"Z\":\"12\"}}\n";
+    WRITE_TO_BUFFER(objWrite2);
+
+//     char *objWrite3 = "1{\"A\":{\"XX\":\"12\",\"YY\":\"12\"},\"V\":{\"Z\":\"12\"}}\n";
+//     WRITE_TO_BUFFER(objWrite3);
+// 
+//     char *objWrite4 = "{\"A\":[\"X\":\"2\",\"Y\":\"2\"],\"V\":{\"Z\":\"12\"}}\n";
+//     WRITE_TO_BUFFER(objWrite4);
+    JSON_TEST_CASE();
+
+    Buffer *buff = get_json_buffer();
+    printf("BUFFER after value");
+    print_buffer(buff);
+    printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
+}
 int main()
 {
+    printf("---------- TEST_JSON_OBJECT ----------\r\n");
     system_init();
     json_init();
-    // init value to write
-//     char *obj1 = "{\"a\":\"1\",\"b\":\"2\"}\r\n";
-    char *obj1 = "{\"name\":\"Jack\",\"age\":\"27\"}\r\n";
-    TEST_JSON_OBJECT(obj1);
 
-//    system_init();
-   json_init();
-    char *obj2 = "{\"a\":{\"X\":\"1\",\"Y\":\"1\"},\"b\":{\"Z\":\"1\"}}\r\n";
-    TEST_JSON_OBJECT(obj2);
-
-//    system_init();
-   json_init();
-    char *obj3 = "{\"a\":{\"X\":\"1\",\"Y\":\"1\"},\"b\":\"1\"}\r\n";
-    TEST_JSON_OBJECT(obj3);
-    
+    TEST_JSON_OBJECT_ARRAY_TRUE();
+//     TEST_JSON_OBJECT_ARRAY_TRUE_2();
+//    TEST_JSON_OBJECT_FALSE();
     return 0;
 }

@@ -9,70 +9,7 @@ void TEST_JSON_OBJECT_READ()
 {
     printf("--- TEST_JSON_OBJECT_READ ---\r\n");
 
-    Buffer *rxBuff = get_json_rx_buffer();
 
-
-    
-    // parser json object
-    JsonConsume consume;
-    
-    
-    while(buffer_bytes_used(rxBuff) > 0)
-    {
-        printf("Json input string: \r\n%s\r\n", rxBuff->buffer);
-        json_consume_init(&consume);
-        consume = get_json_type(rxBuff, &consume);
-        printf("json output: \r\n");
-        printf("consume.couter: %d\r\n", consume.counter);
-        
-        switch(consume.type)
-        {
-            case JSON_TYPE_STRING:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                printf("Json output string: %s\r\n", buff->buffer);
-                break;
-            }
-            case JSON_TYPE_OBJECT:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                printf("consume.couter: %d\r\n", consume.counter);
-                while(consume.counter > 3)
-                {
-                    consume = read_json_key(buff, &consume);
-                    consume = read_json_value(buff, &consume);
-                    printf("consume.couter: %d\r\n", consume.counter);
-                    
-                }
-                if(consume.counter > 0)
-                    consume_buffer(buff, LF);
-
-                break;
-            }
-            case JSON_TYPE_ARRAY:
-            {
-                printf("Json type : %d\r\n", consume.type);
-                Buffer *buff = get_json_buffer();
-                printf("consume.couter: %d\r\n", consume.counter);
-                while(consume.counter > 3)
-                {
-                    consume = read_json_key(buff, &consume);
-                    consume = read_json_value(buff, &consume);
-                    printf("consume.couter: %d\r\n", consume.counter);
-                    
-                }
-                if(consume.counter > 0)
-                    consume_buffer(buff, LF);
-
-                break;
-            }
-            default:
-                error("PARSER FALSE\r\n");
-                break;
-        }
-    }
 }
 
 void TEST_JSON_OBJECT_READ_FALSE()

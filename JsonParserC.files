@@ -10,6 +10,11 @@ include/json/json_parser.h
 include/json/json_parser.h
 include/json/json_parser_object.h
 include/json/json_parser_object.h
+include/json/json_reader.h
+include/system/config.h
+include/system/debug.h
+include/system/error.h
+include/system/system.h
 include/system_init.h
 src/driver/buffer.c
 src/driver/ring_buffer.c
@@ -17,11 +22,15 @@ src/driver/uart/ring_buffer.c
 src/json/json.c
 src/json/json_parser.c
 src/json/json_parser_object.c
+src/json/json_reader.c
+src/system/error.c
+src/system/system.c
 src/system_init.c
 unitTest/TEST_JSON/TEST_JSON_ARRAY/TEST_JSON_ARRAY.c
 unitTest/TEST_JSON/TEST_JSON_ARRAY/xmodule.mk
 unitTest/TEST_JSON/TEST_JSON_OBJECT/TEST_JSON_OBJECT.c
 unitTest/TEST_JSON/TEST_JSON_OBJECT/xmodule.mk
+unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/TEST_JSON_OBJECT_ARRAY.c
 unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/TEST_JSON_OBJECT_READ.c
 unitTest/TEST_JSON/TEST_JSON_STRING/TEST_JSON_STRING.c
 unitTest/test_init.c

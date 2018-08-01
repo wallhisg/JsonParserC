@@ -157,8 +157,6 @@ int get_no_of_json_object()
 void json_consume_init(JsonConsume *jsonConsume)
 {
     jsonConsume->tribool =  TRIBOOL_INDETERMINATE;
-    jsonConsume->isObjects = false;
-    jsonConsume->type =  JSON_TYPE_UNDEFINED;
-    jsonConsume->state = JSON_OBJECT_INDERERMINATE;
-    jsonConsume->counter = 0;
+    jsonConsume->type =  JSON_TYPE_RAW;
+    jsonConsume->state = JSON_STATE_UNDEFINE;
 }

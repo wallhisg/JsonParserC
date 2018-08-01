@@ -11,3 +11,6 @@ include/driver
 unitTest/TEST_JSON/TEST_JSON_OBJECT_READ
 src/driver
 unitTest
+unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY
+src/system
+include/system

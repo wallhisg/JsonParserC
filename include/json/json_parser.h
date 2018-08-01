@@ -8,7 +8,6 @@
 
 
 JsonConsume get_json_type(Buffer *inBuff, JsonConsume *jsonConsume);
-JsonConsume consume_char(char c, JsonConsume *jsonConsume );
 JsonConsume consume_char(const char c, JsonConsume *objConsume);
 
 #endif // JSON_PARSER_H

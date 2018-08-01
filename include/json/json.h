@@ -34,20 +34,28 @@ typedef enum {
     JSON_TYPE_UNDEFINED,
     JSON_TYPE_STRING,
     JSON_TYPE_OBJECT,
-    JSON_TYPE_ARRAY
+    JSON_TYPE_ARRAY,
+    JSON_TYPE_RAW
 } JsonType;
 
 typedef enum {
-    JSON_OBJECT_INDERERMINATE,  // 0
-    JSON_OBJECT_BEGIN,            // 1
-    JSON_OBJECT_KEY,            // 2
-    JSON_OBJECT_KEY_BEGIN,      // 3
-    JSON_OBJECT_KEY_END,        // 4
-    JSON_OBJECT_VALUE,          // 5
-    JSON_OBJECT_VALUE_BEGIN,    // 6
-    JSON_OBJECT_VALUE_END,      // 7
-    JSON_OBJECT_END             // 8
-} JsonObjectState;
+    // States of object and array
+    JSON_STATE_UNDEFINE = 00,  // 0
+    JSON_STATE_BEGIN = 01,          // 1
+    JSON_STATE_NAME_BEGIN = 02,            // 2
+    JSON_STATE_NAME = 03,      // 3
+    JSON_STATE_NAME_END = 04,        // 4
+    JSON_STATE_VALUE = 05,          // 5
+    JSON_STATE_VALUE_STR_BEGIN = 06,    // 6
+    JSON_STATE_VALUE_STR_END = 07,      // 7
+    JSON_STATE_VALUE_OBJECT_BEGIN = 16,    // 6
+    JSON_STATE_VALUE_OBJECT_END = 17,      // 7
+    JSON_STATE_VALUE_ARRAY_BEGIN = 26,    // 6
+    JSON_STATE_VALUE_ARRAY_END = 27,      // 7
+    JSON_STATE_END = 8,             // 8
+    JSON_END = 9
+    // state of string
+} JsonState;
 
 // six struct tokens
 typedef enum {
@@ -88,9 +96,7 @@ typedef struct {
 } JsonObjectArray, *JsonObjectArrayPtr;
 
 typedef struct JsonConsume{
-    bool isObjects;
-    uint8_t counter;
-    JsonObjectState state;
+    JsonState state;
     TriBool tribool;
     JsonType type;
     struct JsonConsume (*nextTok)(const char, struct JsonConsume *);

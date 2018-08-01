@@ -48,7 +48,7 @@ include ./JsonParserC/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_STRING/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_OBJECT/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_ARRAY/xmodule.mk
-#include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/xmodule.mk
+include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/xmodule.mk
 
 #======================================================================
@@ -79,7 +79,7 @@ TEST_JSON_OBJECT_READ_EXE:
 	@./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/TEST_JSON_OBJECT_READ_EXE
 # TEST MEM	
 mem_program: $(PROGRAMS)
-	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no ./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/TEST_JSON_OBJECT_READ_EXE
+	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no ./unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/TEST_JSON_OBJECT_ARRAY_EXE
 	
 mem_test: $(TEST_HANDLE_EVENT)
 	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no $(TEST_HANDLE_EVENT)	
