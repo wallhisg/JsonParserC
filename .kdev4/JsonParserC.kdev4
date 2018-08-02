@@ -232,7 +232,7 @@ pattern=.hg
 targets=2
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5,Launch Configuration 6
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5,Launch Configuration 6,Launch Configuration 7
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
@@ -371,6 +371,24 @@ Dependency Action=Nothing
 EnvironmentGroup=
 Executable=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
 External Terminal=gnome-terminal --window-with-profile=KDevelop %exe -- make TEST_JSON_OBJECT_EXE
+Project Target=
+Use External Terminal=true
+Working Directory=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
+isExecutable=true
+
+[Launch][Launch Configuration 7]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=TEST_JSON_OBJECT_WRITE_EXE
+Type=Native Application
+
+[Launch][Launch Configuration 7][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
+External Terminal=gnome-terminal --window-with-profile=KDevelop %exe -- make TEST_JSON_OBJECT_WRITE_EXE
 Project Target=
 Use External Terminal=true
 Working Directory=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC

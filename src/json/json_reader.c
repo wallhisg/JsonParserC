@@ -2,11 +2,11 @@
 
 extern JsonConsume tok_letter_start(const char c, JsonConsume objConsume);
 
-#define JSON_KEY_LENGTH     8
-#define JSON_VALUE_LENGTH   32
+#define JSON_KEY_READ_LENGTH     8
+#define JSON_VALUE_READ_LENGTH   32
 
-static char jsonKey[JSON_KEY_LENGTH];
-static char jsonValue[JSON_VALUE_LENGTH];
+static char keyRead[JSON_KEY_READ_LENGTH];
+static char valueRead[JSON_VALUE_READ_LENGTH];
 
 void json_key_value_init();
 
@@ -28,13 +28,13 @@ JsonConsume json_read_key_value(Buffer *inBuff, JsonConsume *jsonConsume)
         {
             if(consume.state == JSON_STATE_NAME)
             {
-                jsonKey[idxKey++] = byte;
+                keyRead[idxKey++] = byte;
             }
             else if((consume.state == JSON_STATE_VALUE_STR_BEGIN) ||
                     (consume.state == JSON_STATE_VALUE_OBJECT_BEGIN) ||
                     (consume.state == JSON_STATE_VALUE_ARRAY_BEGIN))
             {
-                jsonValue[idxVal++] = byte;
+                valueRead[idxVal++] = byte;
             }
             else if(consume.state == JSON_STATE_END)
             {
@@ -55,9 +55,9 @@ JsonConsume json_read_key_value(Buffer *inBuff, JsonConsume *jsonConsume)
 
 void json_key_value_init()
 {
-    memset(jsonKey, 0, JSON_KEY_LENGTH * sizeof(char));
-    memset(jsonValue, 0, JSON_VALUE_LENGTH * sizeof(char));
+    memset(keyRead, 0, JSON_KEY_READ_LENGTH * sizeof(char));
+    memset(valueRead, 0, JSON_VALUE_READ_LENGTH * sizeof(char));
 }
 
-char *json_get_key() { return jsonKey; }
-char *json_get_value() { return jsonValue; }
+char *json_get_key() { return keyRead; }
+char *json_get_value() { return valueRead; }

@@ -12,6 +12,9 @@
 #define LF      0x0A    //  '\n' - New Line
 #define CR      0x0D    //  '\r' - Enter
 
+#define JSON_KEY_WRITE_LENGTH     8
+#define JSON_VALUE_WRITE_LENGTH   32
+
 typedef enum {
     JSON_TYPE_UNDEFINED,
     JSON_TYPE_STRING,
@@ -45,6 +48,12 @@ typedef struct JsonConsume{
     JsonType type;
     struct JsonConsume (*nextTok)(const char, struct JsonConsume *);
 } JsonConsume;
+
+typedef struct {
+    JsonType type;
+    char key[JSON_KEY_WRITE_LENGTH];
+    char value[JSON_VALUE_WRITE_LENGTH];
+} JsonKeyValue;
 
 void json_init();
 Buffer *get_json_buffer();
