@@ -21,7 +21,7 @@ void TEST_JSON_OBJECT_TRUE()
     JSON_TEST_CASE();
     Buffer *buff = get_json_buffer();
     printf("BUFFER after value");
-    print_buffer(buff);
+    buffer_print(buff);
     printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 
@@ -45,7 +45,7 @@ void TEST_JSON_OBJECT_FALSE()
     
     Buffer *buff = get_json_buffer();
     printf("BUFFER after value");
-    print_buffer(buff);
+    buffer_print(buff);
     printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 int main()

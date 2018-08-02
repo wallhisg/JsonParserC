@@ -32,9 +32,11 @@ const char buffer_read_one_byte(Buffer *buff);
 uint16_t buffer_read_bytes(char *result,  Buffer *buff);
 
 const uint16_t buffer_bytes_used(const Buffer *buff);
-const uint16_t buffer_size_get(const Buffer *buff);
-const BufferStatus get_buffer_status(Buffer *buff);
-void consume_buffer(Buffer *buff, char ctrlChar);
-void print_buffer(Buffer *buff);
+const uint16_t buffer_get_size(const Buffer *buff);
+const BufferStatus buffer_get_status(Buffer *buff);
+
+void buffer_consume(Buffer *buff, char ctrlChar);
+void buffer_backward(Buffer *buff);
+void buffer_print(Buffer *buff);
 
 #endif // RING_BUFFER_H

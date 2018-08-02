@@ -9,7 +9,6 @@ void buffer_reset(Buffer *buff)
 
 void buffer_write_one_byte(Buffer *buff, const char byte)
 {
-//     printf("byte write %c - %d\r\n", byte, byte);
     // accept ascii code <= 127
     if(byte <= 127)
     {
@@ -60,9 +59,8 @@ uint16_t buffer_write_bytes(Buffer *buff, char *bytes)
 
 const char buffer_read_one_byte(Buffer *buff)
 {
-    char byteRead = 0;
+    char byteRead;
     byteRead = *buff->head;
-//    printf("byte read %d\r\n", byteRead);
     *buff->head = ' ';  // rewrite space
     buff->head++;
 
@@ -108,7 +106,7 @@ const uint16_t buffer_bytes_used(const Buffer *buff)
     return bytesUsed;
 }
 
-const uint16_t buffer_size_get(const Buffer *buff)
+const uint16_t buffer_get_size(const Buffer *buff)
 {
     uint16_t bytesUsed = 0;
 
@@ -127,13 +125,13 @@ const uint16_t buffer_size_get(const Buffer *buff)
     return bytesUsed;
 }
 
-const BufferStatus get_buffer_status(Buffer *buff)
+const BufferStatus buffer_get_status(Buffer *buff)
 {
     return buff->status;
 }
 
 // Loop to get char out of buffer until met ctrlChar
-void consume_buffer(Buffer *buff, char ctrlChar)
+void buffer_consume(Buffer *buff, char ctrlChar)
 {
     printf("consume_buffer\r\n");
     char byte;
@@ -145,7 +143,32 @@ void consume_buffer(Buffer *buff, char ctrlChar)
     }
 }
 
-void print_buffer(Buffer *buff)
+void buffer_backward(Buffer *buff)
+{
+    int i  = 0;
+    for(i = 0; i < buffer_bytes_used(buff); ++i)
+    {
+        if(buff->tail == buff->buffer)
+            buff->tail = buff->buffer + buff->size;
+        else 
+            buff->tail--;
+        
+        if (buff->tail == buff->head)
+            buff->status = RING_STATUS_EMPTY;
+        else
+            buff->status = RING_STATUS_DATA_PRESENT;        
+        
+        if(*buff->tail == LF) {
+            buff->tail++;
+            break;
+        }
+        else {
+            *buff->tail = ' ';
+        }
+    }
+}
+
+void buffer_print(Buffer *buff)
 {
     int i = 0;
     for(i = 0; i < buff->size; ++i)

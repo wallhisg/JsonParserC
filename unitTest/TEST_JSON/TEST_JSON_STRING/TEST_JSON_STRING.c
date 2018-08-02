@@ -15,7 +15,7 @@ void TEST_JSON_STRING_TRUE()
 
     Buffer *buff = get_json_buffer();
     printf("JsonBuffer: ");
-    print_buffer(buff);
+    buffer_print(buff);
     printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 
@@ -30,7 +30,7 @@ void TEST_JSON_STRING_FALSE()
 
     Buffer *buff = get_json_buffer();
     printf("JsonBuffer: ");
-    print_buffer(buff);
+    buffer_print(buff);
     printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 int main()

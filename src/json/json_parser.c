@@ -9,18 +9,20 @@ JsonConsume tok_right_curly(const char c, JsonConsume *objConsume);
 JsonConsume tok_left_bracket(const char c, JsonConsume *objConsume);
 JsonConsume tok_right_bracket(const char c, JsonConsume *objConsume);
 JsonConsume tok_letter(const char c, JsonConsume *objConsume);
+JsonConsume tok_ctrl_letter(const char c, JsonConsume *objConsume);
 
 #ifndef CONSUME_DEBUG
-#define CONSUME_DEBUG   0
+    #define CONSUME_DEBUG   0
 #endif
-JsonConsume consume_char(const char c, JsonConsume *objConsume)
+
+JsonConsume consume_char(const char c, JsonConsume *consume)
 {
-    JsonConsume consume;
-    consume = objConsume->nextTok(c, objConsume);
-#if CONSUME_DEBUG
+
+    consume->nextTok(c, consume);
+    #if CONSUME_DEBUG
     printf("TYPE: %d - TRIBOOL: %d - CHAR %c - STATE %02d\r\n", consume.type, consume.tribool, c, consume.state);
-#endif
-    return consume;
+    #endif
+    return *consume;
 }
 
 JsonConsume tok_letter_start(const char c, JsonConsume *objConsume)
@@ -40,7 +42,6 @@ JsonConsume tok_letter_start(const char c, JsonConsume *objConsume)
         case '\0': {
             consume->nextTok = (void *)tok_letter_start;
             consume->tribool = TRIBOOL_INDETERMINATE;
-            consume->type = JSON_TYPE_UNDEFINED;
             break;
         }
         default: {
@@ -308,6 +309,8 @@ JsonConsume tok_right_curly(const char c, JsonConsume *objConsume)
         case '\0':
         case '\r':
         case '\n': {
+            consume->nextTok = (void *)tok_ctrl_letter;
+
             if(consume->state == JSON_STATE_END) {
                 consume->state = JSON_END;
                 consume->tribool = TRIBOOL_TRUE;
@@ -439,6 +442,37 @@ JsonConsume tok_letter(const char c, JsonConsume *objConsume)
             else
                 consume->tribool = TRIBOOL_FALSE;
 
+            break;
+        }
+    }
+
+    return *consume;
+}
+
+// CASE CR LF '\0'
+JsonConsume tok_ctrl_letter(const char c, JsonConsume *objConsume)
+{
+    debug_message("tok_ctrl_letter\r\n");
+    JsonConsume *consume = objConsume;
+
+    switch (c) {
+        case '{' :
+        {
+            consume->state = JSON_STATE_BEGIN;
+            consume->tribool = TRIBOOL_TRUE;
+            consume->nextTok = (void *)tok_left_curly;
+            break;
+        }
+        case LF:
+        case CR:
+        case '\0':
+        {
+            consume->nextTok = (void *)tok_ctrl_letter;
+            consume->tribool = TRIBOOL_INDETERMINATE;
+            break;
+        }
+        default: {
+            consume->tribool = TRIBOOL_FALSE;
             break;
         }
     }

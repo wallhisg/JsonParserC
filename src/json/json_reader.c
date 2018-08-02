@@ -10,8 +10,7 @@ static char jsonValue[JSON_VALUE_LENGTH];
 
 void json_key_value_init();
 
-
-JsonConsume json_read_key(Buffer *inBuff, JsonConsume *jsonConsume)
+JsonConsume json_read_key_value(Buffer *inBuff, JsonConsume *jsonConsume)
 {
     json_key_value_init();
     int idxKey = 0;
@@ -41,64 +40,18 @@ JsonConsume json_read_key(Buffer *inBuff, JsonConsume *jsonConsume)
             {
                 break;
             }
-            else if(consume.state == JSON_END)
-            {
-                consume.state = JSON_STATE_BEGIN;
-                consume.tribool = TRIBOOL_TRUE;
-                consume.nextTok = (void *)tok_letter_start;
-                break;
-            }
-
         }
         else if(consume.tribool == TRIBOOL_FALSE)
         {
-            printf("Fatal error: json string wrong at %d - %c\r\n", i, byte);
+            printf("Fatal error: input string wrong at %d - %c\r\n", i, byte);
             json_key_value_init();
-            consume_buffer(inBuff, LF);
+            buffer_consume(inBuff, LF);
             break;
         }
     }
 
     return consume;
 }
-
-//JsonConsume json_read_value(Buffer *inBuff, JsonConsume *jsonConsume)
-//{
-//    int idx = 0;
-//    char byte;
-//    JsonConsume consume;
-
-//    int byteUsed = buffer_bytes_used(inBuff);
-//    int i = 0;
-//    for(i = 0; i < byteUsed; ++i)
-//    {
-//        byte = buffer_read_one_byte(inBuff);
-////        consume = consume_char(byte, jsonConsume);
-////        if(consume.tribool == TRIBOOL_TRUE)
-////        {
-////            if(consume.state == JSON_STATE_NAME)
-////            {
-////                jsonKey[idx++] = byte;
-////            }
-////            else if(consume.state == JSON_STATE_END)
-////            {
-////                break;
-////            }
-////        }
-////        else if(consume.state == JSON_STATE_END)
-////        {
-////            break;
-////        }
-////        else if(consume.tribool == TRIBOOL_FALSE)
-////        {
-////            json_key_value_init();
-////            consume_buffer(inBuff, LF);
-////            break;
-////        }
-//    }
-
-//    consume;
-//}
 
 void json_key_value_init()
 {
@@ -108,4 +61,3 @@ void json_key_value_init()
 
 char *json_get_key() { return jsonKey; }
 char *json_get_value() { return jsonValue; }
-char *json_get_string() { return jsonValue; }

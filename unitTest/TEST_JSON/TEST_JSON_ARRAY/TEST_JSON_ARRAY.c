@@ -20,7 +20,7 @@ void TEST_JSON_ARRAY_TRUE()
 
     Buffer *buff = get_json_buffer();
     printf("BUFFER after value");
-    print_buffer(buff);
+    buffer_print(buff);
     printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 
@@ -39,7 +39,7 @@ void TEST_JSON_ARRAY_FALSE()
 
     Buffer *buff = get_json_buffer();
     printf("BUFFER after value");
-    print_buffer(buff);
+    buffer_print(buff);
     printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 

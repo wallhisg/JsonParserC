@@ -6,8 +6,6 @@
 #include <json/json.h>
 #include <driver/buffer.h>
 
-
-JsonConsume get_json_type(Buffer *inBuff, JsonConsume *jsonConsume);
-JsonConsume consume_char(const char c, JsonConsume *objConsume);
+JsonConsume consume_char(const char c, JsonConsume *consume);
 
 #endif // JSON_PARSER_H
