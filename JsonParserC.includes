@@ -14,3 +14,4 @@ unitTest
 unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY
 src/system
 include/system
+unitTest/TEST_JSON/TEST_JSON_OBJECT_WRITE

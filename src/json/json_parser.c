@@ -20,7 +20,7 @@ JsonConsume consume_char(const char c, JsonConsume *consume)
 
     consume->nextTok(c, consume);
     #if CONSUME_DEBUG
-    printf("TYPE: %d - TRIBOOL: %d - CHAR %c - STATE %02d\r\n", consume.type, consume.tribool, c, consume.state);
+    printf("TYPE: %d - TRIBOOL: %d - CHAR %c - STATE %02d\r\n", consume->type, consume->tribool, c, consume->state);
     #endif
     return *consume;
 }
@@ -40,7 +40,7 @@ JsonConsume tok_letter_start(const char c, JsonConsume *objConsume)
         case CR:
         case LF:
         case '\0': {
-            consume->nextTok = (void *)tok_letter_start;
+            consume->nextTok = (void *)tok_ctrl_letter;
             consume->tribool = TRIBOOL_INDETERMINATE;
             break;
         }

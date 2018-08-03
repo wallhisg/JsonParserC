@@ -36,7 +36,7 @@ JsonConsume json_read_key_value(Buffer *inBuff, JsonConsume *jsonConsume)
             {
                 valueRead[idxVal++] = byte;
             }
-            else if(consume.state == JSON_STATE_END)
+            else if(consume.state == JSON_END)
             {
                 break;
             }

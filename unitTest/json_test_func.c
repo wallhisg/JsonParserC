@@ -40,8 +40,8 @@ void JSON_TEST_CASE()
     while(buffer_bytes_used(rxBuff) > 0)
     {
 
-//         printf("Json input string:\r\n");
-//         print_buffer(rxBuff);
+         printf("Json input string:\r\n");
+         buffer_print(rxBuff);
         
         consume = json_read_key_value(rxBuff, &consume);
         if(consume.tribool == TRIBOOL_TRUE)
@@ -51,7 +51,7 @@ void JSON_TEST_CASE()
             {
                 case JSON_TYPE_STRING:
                 {
-                    printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
+                    printf("\tJSON_TYPE: %d \tKEY: %s \t\t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
                     break;
                 }
                 case JSON_TYPE_OBJECT:
