@@ -95,7 +95,7 @@ JsonConsume tok_dq_mark(const char c, JsonConsume *objConsume)
             consume->nextTok = (void *)tok_right_curly;
 
             if(consume->state == JSON_STATE_VALUE_OBJECT_BEGIN) {
-                consume->state = JSON_STATE_VALUE_OBJECT_END;
+//                consume->state = JSON_STATE_VALUE_OBJECT_END;
                 consume->tribool = TRIBOOL_TRUE;
             }
             else if(consume->state == JSON_STATE_VALUE_STR_END) {
@@ -111,7 +111,7 @@ JsonConsume tok_dq_mark(const char c, JsonConsume *objConsume)
             consume->nextTok = (void *)tok_right_bracket;
 
             if(consume->state == JSON_STATE_VALUE_ARRAY_BEGIN) {
-                consume->state = JSON_STATE_VALUE_ARRAY_END;
+//                consume->state = JSON_STATE_VALUE_ARRAY_END;
                 consume->tribool = TRIBOOL_TRUE;
             }
             else
@@ -173,6 +173,7 @@ JsonConsume tok_colon(const char c, JsonConsume *objConsume)
             consume->nextTok = (void *)tok_left_curly;
 
             if(consume->state == JSON_STATE_VALUE) {
+                consume->state = JSON_STATE_VALUE_OBJECT_BEGIN;
                 consume->type = JSON_TYPE_OBJECT;
                 consume->tribool = TRIBOOL_TRUE;
             }
@@ -186,6 +187,7 @@ JsonConsume tok_colon(const char c, JsonConsume *objConsume)
             consume->nextTok = (void *)tok_left_bracket;
 
             if(consume->state == JSON_STATE_VALUE) {
+                consume->state = JSON_STATE_VALUE_ARRAY_BEGIN;
                 consume->type = JSON_TYPE_ARRAY;
                 consume->tribool = TRIBOOL_TRUE;
             }
@@ -257,8 +259,7 @@ JsonConsume tok_left_curly(const char c, JsonConsume *objConsume)
                 consume->state = JSON_STATE_NAME_BEGIN;
                 consume->tribool = TRIBOOL_TRUE;
             }
-            else if(consume->state == JSON_STATE_VALUE) {
-                consume->state = JSON_STATE_VALUE_OBJECT_BEGIN;
+            else if(consume->state == JSON_STATE_VALUE_OBJECT_BEGIN) {
                 consume->tribool = TRIBOOL_TRUE;
             }
             else
@@ -286,7 +287,12 @@ JsonConsume tok_right_curly(const char c, JsonConsume *objConsume)
         {
             consume->nextTok = (void *)tok_comma;
 
-            if(consume->state == JSON_STATE_VALUE_OBJECT_END) {
+            if(consume->state == JSON_STATE_VALUE_STR_BEGIN) {
+                consume->state = JSON_STATE_VALUE_STR_END;
+                consume->tribool = TRIBOOL_TRUE;
+            }
+            else if(consume->state == JSON_STATE_VALUE_OBJECT_BEGIN)
+            {
                 consume->state = JSON_STATE_END;
                 consume->tribool = TRIBOOL_TRUE;
             }
@@ -298,7 +304,7 @@ JsonConsume tok_right_curly(const char c, JsonConsume *objConsume)
         {
             consume->nextTok = (void *)tok_right_curly;
             
-            if(consume->state == JSON_STATE_VALUE_OBJECT_END) {
+            if(consume->state == JSON_STATE_VALUE_OBJECT_BEGIN) {
                 consume->state = JSON_STATE_END;
                 consume->tribool = TRIBOOL_TRUE;
             }
@@ -340,8 +346,7 @@ JsonConsume tok_left_bracket(const char c, JsonConsume *objConsume)
         {
             consume->nextTok = (void *)tok_dq_mark;
 
-            if(consume->state == JSON_STATE_VALUE) {
-                consume->state = JSON_STATE_VALUE_ARRAY_BEGIN;
+            if(consume->state == JSON_STATE_VALUE_ARRAY_BEGIN) {
                 consume->tribool = TRIBOOL_TRUE;
             }
             else
@@ -369,7 +374,7 @@ JsonConsume tok_right_bracket(const char c, JsonConsume *objConsume)
         {
             consume->nextTok = (void *)tok_comma;
 
-            if(consume->state == JSON_STATE_VALUE_ARRAY_END)
+            if(consume->state == JSON_STATE_VALUE_ARRAY_BEGIN)
             {
                 consume->state = JSON_STATE_END;
                 consume->tribool = TRIBOOL_TRUE;
@@ -379,7 +384,7 @@ JsonConsume tok_right_bracket(const char c, JsonConsume *objConsume)
         case '}':
         {
             consume->nextTok = (void *)tok_right_curly;
-            if(consume->state == JSON_STATE_VALUE_ARRAY_END) {
+            if(consume->state == JSON_STATE_VALUE_ARRAY_BEGIN) {
                 consume->state = JSON_STATE_END;
                 consume->tribool = TRIBOOL_TRUE;
             }

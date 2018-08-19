@@ -1,4 +1,4 @@
-#include <driver/ring_buffer.h>
+#include <driver/buffer_ring.h>
 
 void buffer_reset(Buffer *buff)
 {
@@ -133,7 +133,6 @@ const BufferStatus buffer_get_status(Buffer *buff)
 // Loop to get char out of buffer until met ctrlChar
 void buffer_consume(Buffer *buff, char ctrlChar)
 {
-    printf("consume_buffer\r\n");
     char byte;
     while(buff->status != RING_STATUS_EMPTY)
     {

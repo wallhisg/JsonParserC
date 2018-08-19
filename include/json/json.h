@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <system/system.h>
-#include <driver/ring_buffer.h>
+#include <driver/buffer_ring.h>
 
 #define LF      0x0A    //  '\n' - New Line
 #define CR      0x0D    //  '\r' - Enter
@@ -16,11 +16,11 @@
 #define JSON_VALUE_WRITE_LENGTH   32
 
 typedef enum {
-    JSON_TYPE_UNDEFINED,
-    JSON_TYPE_STRING,
-    JSON_TYPE_OBJECT,
-    JSON_TYPE_ARRAY,
-    JSON_TYPE_RAW
+    JSON_TYPE_UNDEFINED = 00,
+    JSON_TYPE_STRING = 01,
+    JSON_TYPE_OBJECT = 02,
+    JSON_TYPE_ARRAY = 03,
+    JSON_TYPE_RAW = 04
 } JsonType;
 
 typedef enum {

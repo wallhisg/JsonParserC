@@ -49,9 +49,9 @@ include ./unitTest/TEST_JSON/TEST_JSON_STRING/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_OBJECT/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_ARRAY/xmodule.mk
 include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/xmodule.mk
-include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/xmodule.mk
-include ./unitTest/TEST_JSON/TEST_JSON_OBJECT_WRITE/xmodule.mk
-
+include ./unitTest/TEST_JSON/TEST_JSON_READ/xmodule.mk
+include ./unitTest/TEST_JSON/TEST_JSON_WRITE/xmodule.mk
+include ./unitTest/TEST_JSON/TEST_JSON_CODER_DECODER/xmodule.mk
 #======================================================================
 .PHONY: default build run all clean
 
@@ -76,18 +76,17 @@ TEST_JSON_ARRAY_EXE:
 TEST_JSON_OBJECT_ARRAY_EXE:
 	@./unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/TEST_JSON_OBJECT_ARRAY_EXE
 
-TEST_JSON_OBJECT_READ_EXE:
-	@./unitTest/TEST_JSON/TEST_JSON_OBJECT_READ/TEST_JSON_OBJECT_READ_EXE
+TEST_JSON_READ_EXE:
+	@./unitTest/TEST_JSON/TEST_JSON_READ/TEST_JSON_READ_EXE
 
-TEST_JSON_OBJECT_WRITE_EXE:
-	@./unitTest/TEST_JSON/TEST_JSON_OBJECT_WRITE/TEST_JSON_OBJECT_WRITE_EXE	
+TEST_JSON_WRITE_EXE:
+	@./unitTest/TEST_JSON/TEST_JSON_WRITE/TEST_JSON_WRITE_EXE	
 	
+TEST_JSON_CODER_DECODER_EXE:
+	@./unitTest/TEST_JSON/TEST_JSON_CODER_DECODER/TEST_JSON_CODER_DECODER_EXE	
 # TEST MEM	
 mem_program: $(PROGRAMS)
 	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no ./unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/TEST_JSON_OBJECT_ARRAY_EXE
-	
-mem_test: $(TEST_HANDLE_EVENT)
-	valgrind --tool=memcheck --leak-check=full --undef-value-errors=no $(TEST_HANDLE_EVENT)	
 clean:
 	$(RM) $(OBJS) $(DEPS) $(PROGRAMS) $(TMPS) $(TESTS)
 

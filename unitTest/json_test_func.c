@@ -30,45 +30,51 @@ void JSON_TEST_CASE()
     printf("Json input string:\r\n");
     buffer_print(rxBuff);
     
-    // parser json object
-    JsonConsume consume;
-    json_consume_init(&consume);
-    consume.nextTok = (void *)tok_letter_start;
-
-    int i = 0;
-//     for(i = 0; i < 6; ++i)
-    while(buffer_bytes_used(rxBuff) > 0)
-    {
-
-         printf("Json input string:\r\n");
-         buffer_print(rxBuff);
-        
-        consume = json_read_key_value(rxBuff, &consume);
-        if(consume.tribool == TRIBOOL_TRUE)
-        {
-            printf("Json %d:\r\n", i++);
-            switch(consume.type)
-            {
-                case JSON_TYPE_STRING:
-                {
-                    printf("\tJSON_TYPE: %d \tKEY: %s \t\t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
-                    break;
-                }
-                case JSON_TYPE_OBJECT:
-                {
-                    printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
-                    break;
-                }
-                case JSON_TYPE_ARRAY:
-                {
-                    printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
-                    break;
-                }
-                default:
-                    break;
-            }
-
-        }
-    }
+    json_read_frame(rxBuff);
+//    json_read_frame(rxBuff);
+//    json_read_frame(rxBuff);
+//    json_read_frame(rxBuff);
+//    json_read_frame(rxBuff);
+//    json_read_frame(rxBuff);
+//     // parser json object
+//     JsonConsume consume;
+//     json_consume_init(&consume);
+//     consume.nextTok = (void *)tok_letter_start;
+// 
+//     int i = 0;
+// //     for(i = 0; i < 6; ++i)
+//     while(buffer_bytes_used(rxBuff) > 0)
+//     {
+// 
+//          printf("Json input string:\r\n");
+//          buffer_print(rxBuff);
+//         
+//         consume = json_read_key_value(rxBuff, &consume);
+//         if(consume.tribool == TRIBOOL_TRUE)
+//         {
+//             printf("Json %d:\r\n", i++);
+//             switch(consume.type)
+//             {
+//                 case JSON_TYPE_STRING:
+//                 {
+//                     printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
+//                     break;
+//                 }
+//                 case JSON_TYPE_OBJECT:
+//                 {
+//                     printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
+//                     break;
+//                 }
+//                 case JSON_TYPE_ARRAY:
+//                 {
+//                     printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n", consume.type, json_get_key(), json_get_value());
+//                     break;
+//                 }
+//                 default:
+//                     break;
+//             }
+// 
+//         }
+//     }
 
 }

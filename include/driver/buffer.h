@@ -2,7 +2,7 @@
 #define UART_H
 
 #include <system/system.h>
-#include "ring_buffer.h"
+#include "buffer_ring.h"
 
 void buffer_init();
 
