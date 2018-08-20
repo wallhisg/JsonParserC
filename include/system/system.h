@@ -9,6 +9,9 @@
 #include "debug.h"
 #include "error.h"
 
+#define __SIZE_TYPE__ long unsigned int
+typedef __SIZE_TYPE__ size_t;
+
 typedef enum {
     TRIBOOL_FALSE = 0,
     TRIBOOL_TRUE = 1,

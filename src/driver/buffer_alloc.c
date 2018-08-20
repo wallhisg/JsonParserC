@@ -1,15 +1,16 @@
 #include <driver/buffer_alloc.h>
 #include <system/system.h>
 
-#define HEAP_BUFFER_CONFIG_LENGTH   512
+#define HEAP_BUFFER_CONFIG_LENGTH   1024
+
 static char HEAP[HEAP_BUFFER_CONFIG_LENGTH];
 static memory_header *heap = NULL;
 
 static void *buffer_alloc(memory_header *header, size_t size);
 static void buffer_realloc(void *ptr);
-void buffer_refresh();
 static size_t verify_header(memory_header *header);
 static void display_header(const memory_header *header);
+void buffer_refresh();
 
 void *buffer_malloc(const size_t size)
 {
@@ -17,7 +18,7 @@ void *buffer_malloc(const size_t size)
     memory_header *cursor = NULL;
     void *ret = NULL;
 
-    size_t len = size;
+    size_t len = size + 1;
     if(len % MEMORY_ALIGN_MULTIPLE)
     {
             len -= len % MEMORY_ALIGN_MULTIPLE;
@@ -40,9 +41,10 @@ void *buffer_malloc(const size_t size)
         }
         cursor = cursor->next;
     }
-    
+    len -= sizeof(memory_header);
+
     if(ret != NULL)
-        memset(ret, 0, size);
+        memset(ret, 0, len);
 
     return ret;
 }
@@ -68,6 +70,7 @@ static void *buffer_alloc(memory_header *ptr, size_t size)
     cursor->prev = header;
 
     ret = (void *)header + sizeof(memory_header);
+
     return ret;
 }
 

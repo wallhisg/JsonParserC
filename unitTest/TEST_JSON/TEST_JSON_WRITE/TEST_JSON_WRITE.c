@@ -10,7 +10,7 @@ void TEST_CREATE_KEY_VALUE()
 {
     printf("--- TEST_CREATE_KEY_VALUE ---\r\n");
     
-    JsonKeyValue kv = json_create_key_value(JSON_TYPE_STRING, "Hello", "World");
+    JsonValue kv = json_create_key_value(JSON_TYPE_STRING, "Hello", "World");
     printf("KEY: %s\r\n", kv.key);
     printf("VALUE: %s\r\n", kv.value);
 }
@@ -21,7 +21,7 @@ void TEST_JSON_WRITE_STRING()
     json_init();
 
     printf("--- TEST_JSON_WRITE_STRING ---\r\n");
-    JsonKeyValue kv = json_create_key_value(JSON_TYPE_STRING, "Hello", "World");
+    JsonValue kv = json_create_key_value(JSON_TYPE_STRING, "Hello", "World");
     printf("KEY: %s\r\n", kv.key);
     printf("VALUE: %s\r\n", kv.value);
     
@@ -38,7 +38,7 @@ void TEST_JSON_WRITE_OBJECT()
     json_init();
 
     printf("--- TEST_JSON_WRITE_OBJECT ---\r\n");
-    JsonKeyValue kv = json_create_key_value(JSON_TYPE_OBJECT,
+    JsonValue kv = json_create_key_value(JSON_TYPE_OBJECT,
                                             "name",
                                             "\"id\":\"1234\",\"method\":\"callme\"");
     printf("KEY: %s\r\n", kv.key);
@@ -57,7 +57,7 @@ void TEST_JSON_WRITE_ARRAY()
     json_init();
 
     printf("--- TEST_JSON_WRITE_ARRAY ---\r\n");
-    JsonKeyValue kv = json_create_key_value(JSON_TYPE_ARRAY,
+    JsonValue kv = json_create_key_value(JSON_TYPE_ARRAY,
                                             "name",
                                             "\"id\",\"1234\",\"method\",\"callme\"");
     printf("KEY: %s\r\n", kv.key);

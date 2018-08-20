@@ -169,6 +169,7 @@ void buffer_backward(Buffer *buff)
 
 void buffer_print(Buffer *buff)
 {
+    printf("BUFFER PRINT. \r\n");
     int i = 0;
     for(i = 0; i < buff->size; ++i)
     {
@@ -176,4 +177,3 @@ void buffer_print(Buffer *buff)
     }
     printf("\r\n");
 }
-

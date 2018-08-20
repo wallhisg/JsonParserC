@@ -1,7 +1,7 @@
 #include <driver/buffer.h>
 
 
-#define UART_RX_BUFFER_LENGTH   128
+#define UART_RX_BUFFER_LENGTH   256
 #define UART_TX_BUFFER_LENGTH   64
 
 static char UART_RX_BUFFER[UART_RX_BUFFER_LENGTH];
@@ -22,6 +22,8 @@ void buffer_init()
     jsonTxBuf.size = UART_TX_BUFFER_LENGTH;
     jsonTxBuf.head = jsonTxBuf.tail = jsonTxBuf.buffer;
     buffer_reset(&jsonTxBuf);
+    
+    buffer_alloc_init();
 }
 
 Buffer *get_json_rx_buffer()

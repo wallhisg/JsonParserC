@@ -15,6 +15,4 @@ typedef struct {
 char *json_compress_ascii(char *rawStr);
 char *json_decompress_ascii(char *codedStr);
 
-
-
 #endif  //  JSON_COMPRESSION_H

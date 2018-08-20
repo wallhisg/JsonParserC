@@ -14,7 +14,7 @@ Name=GCC
 1=/home/wall/Dropbox/projects/JsonParserC/JsonParserC/include
 
 [Filters]
-size=44
+size=45
 
 [Filters][0]
 inclusive=0
@@ -211,6 +211,11 @@ inclusive=0
 pattern=TEST_JSON_WRITE_EXE
 targets=3
 
+[Filters][44]
+inclusive=0
+pattern=TEST_JSON_CODER_DECODER_EXE
+targets=3
+
 [Filters][5]
 inclusive=0
 pattern=.svn
@@ -357,7 +362,7 @@ Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
 EnvironmentGroup=
 Executable=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
-External Terminal=gnome-terminal --window-with-profile=KDevelop %exe -- make TEST_JSON_READ_EXE\s
+External Terminal=make TEST_JSON_READ_EXE\s
 Project Target=
 Use External Terminal=true
 Working Directory=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC

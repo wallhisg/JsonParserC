@@ -17,29 +17,35 @@
 
 typedef enum {
     JSON_TYPE_UNDEFINED = 00,
-    JSON_TYPE_STRING = 01,
-    JSON_TYPE_OBJECT = 02,
-    JSON_TYPE_ARRAY = 03,
-    JSON_TYPE_RAW = 04
+    JSON_TYPE_STRING    = 01,
+    JSON_TYPE_OBJECT    = 02,
+    JSON_TYPE_ARRAY     = 03,
+    JSON_TYPE_RAW       = 04
 } JsonType;
 
 typedef enum {
-    // States of object and array
-    JSON_STATE_UNDEFINE = 00,           // 00
-    JSON_STATE_BEGIN = 01,              // 01
-    JSON_STATE_NAME_BEGIN = 02,         // 02
-    JSON_STATE_NAME = 03,               // 03
-    JSON_STATE_NAME_END = 04,           // 04
-    JSON_STATE_VALUE = 05,              // 05
-    JSON_STATE_VALUE_STR_BEGIN = 06,    // 06
-    JSON_STATE_VALUE_STR_END = 07,      // 07
-    JSON_STATE_VALUE_OBJECT_BEGIN = 16, // 16
-    JSON_STATE_VALUE_OBJECT_END = 17,   // 17
-    JSON_STATE_VALUE_ARRAY_BEGIN = 26,  // 26
-    JSON_STATE_VALUE_ARRAY_END = 27,    // 27
-    JSON_STATE_END = 8,                 // 08
-    JSON_END = 9                        // 09
-    // state of string
+    JSON_STATE_UNDEFINE             = 00,   // 00
+    JSON_STATE_BEGIN                = 01,   // 01
+    JSON_STATE_NAME_BEGIN           = 02,   // 02
+    JSON_STATE_NAME                 = 03,   // 03
+    JSON_STATE_NAME_END             = 04,   // 04
+
+    JSON_STATE_VALUE_BEGIN          = 05,   // 05
+
+    JSON_STATE_VALUE_STR_BEGIN      = 16,   // 06
+    JSON_STATE_VALUE_STRING         = 17,
+    JSON_STATE_VALUE_STR_END        = 18,   // 07
+
+    JSON_STATE_VALUE_OBJECT_BEGIN   = 26,   // 16
+    JSON_STATE_VALUE_OBJECT         = 27,
+    JSON_STATE_VALUE_OBJECT_END     = 28,   // 17
+
+    JSON_STATE_VALUE_ARRAY_BEGIN    = 36,   // 26
+    JSON_STATE_VALUE_ARRAY          = 37,
+    JSON_STATE_VALUE_ARRAY_END      = 38,   // 27
+
+    JSON_STATE_VALUE_END            = 9,    // 08
+    JSON_END                        = 10    // 09
 } JsonState;
 
 typedef struct JsonConsume{
@@ -51,9 +57,14 @@ typedef struct JsonConsume{
 
 typedef struct {
     JsonType type;
-    char key[JSON_KEY_WRITE_LENGTH];
-    char value[JSON_VALUE_WRITE_LENGTH];
-} JsonKeyValue;
+    char *key;
+    char *value;
+} JsonValue;
+
+typedef struct {
+    char *key;
+    char *value;
+} JsonObject;
 
 void json_init();
 Buffer *get_json_buffer();

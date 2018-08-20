@@ -3,6 +3,7 @@
 
 #include <system/system.h>
 #include "buffer_ring.h"
+#include "buffer_alloc.h"
 
 void buffer_init();
 

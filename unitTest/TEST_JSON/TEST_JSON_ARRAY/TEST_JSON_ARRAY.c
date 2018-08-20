@@ -13,8 +13,8 @@ void TEST_JSON_ARRAY_TRUE()
     char *arrayWrite1 = "{\"a\":[\"X\",\"Y\",\"Z\"],\"b\":[\"W\",\"X\",\"H\"]}\n";
     WRITE_TO_BUFFER(arrayWrite1);
 
-    char *arrayWrite2 = "{\"a\":[\"X\",\"Y\",\"Z\"],\"b\":\"1\"}\r\n";
-    WRITE_TO_BUFFER(arrayWrite2);
+//    char *arrayWrite2 = "{\"a\":[\"X\",\"Y\",\"Z\"],\"b\":\"1\"}\r\n";
+//    WRITE_TO_BUFFER(arrayWrite2);
 
     JSON_TEST_CASE();
 
@@ -49,7 +49,7 @@ int main()
     json_init();
 
     TEST_JSON_ARRAY_TRUE();
-    TEST_JSON_ARRAY_FALSE();
+//    TEST_JSON_ARRAY_FALSE();
     return 0;
 }
 

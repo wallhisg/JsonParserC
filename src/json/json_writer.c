@@ -1,7 +1,7 @@
 #include <json/json_writer.h>
+#include <driver/buffer_alloc.h>
 
-
-bool json_write_key_value(Buffer *buff, JsonKeyValue keyValue)
+bool json_write_key_value(Buffer *buff, JsonValue keyValue)
 {
     bool result = false;
     result = json_write_key(buff, keyValue.key);
@@ -137,15 +137,21 @@ bool json_write_value_type_array(Buffer *buff, const char value[])
     return result;
 }
 
-JsonKeyValue json_create_key_value(JsonType type, char key[], char value[])
+JsonValue json_create_key_value(JsonType type, char key[], char value[])
 {
-    JsonKeyValue keyValue;
-    memset(&keyValue.key, 0, JSON_KEY_WRITE_LENGTH);
-    memset(&keyValue.value, 0, JSON_VALUE_WRITE_LENGTH);
+    JsonValue jsonValue;
+    
+    size_t keyLen = strlen(key);
+    jsonValue.key = (char *)buffer_malloc(keyLen * sizeof(char));
+    memset(&jsonValue.key, 0, keyLen);
+    memcpy(&jsonValue.key, key, strlen(key));
+    
+    size_t valLen = strlen(value);
+    jsonValue.key = (char *)buffer_malloc(valLen * sizeof(char));
+    memset(&jsonValue.value, 0, valLen);
+    memcpy(&jsonValue.value, value, strlen(value));
 
-    keyValue.type = type;
-    memcpy(&keyValue.key, key, strlen(key));
-    memcpy(&keyValue.value, value, strlen(value));
+    jsonValue.type = type;
 
-    return keyValue;
+    return jsonValue;
 }

@@ -35,18 +35,20 @@ void TEST_JSON_OBJECT_READ_TRUE()
     char *strWrite = "{\"X\":\"2\",\"Y\":\"2\"}\r\n";
     WRITE_TO_BUFFER(strWrite);
     
-    // Object
-     char *objWrite = "{\"A\":{\"X\":\"2\",\"Y\":\"2\"},\"V\":{\"Z\":\"12\"}}\r\n";
-     WRITE_TO_BUFFER(objWrite);
+     // Object
+      char *objWrite = "{\"A\":{\"X\":\"2\",\"Y\":\"2\"},\"V\":{\"Z\":\"12\"}}\r\n";
+      WRITE_TO_BUFFER(objWrite);
 
-     // Array
-     char *arrayWrite = "{\"a\":[\"X\",\"Y\",\"Z\"]}\r\n";
-    WRITE_TO_BUFFER(arrayWrite);
+      // Array
+      char *arrayWrite = "{\"a\":[\"X\",\"Y\",\"Z\"]}\r\n";
+     WRITE_TO_BUFFER(arrayWrite);
 
     JSON_TEST_CASE();
+    display_heap();
 }
 int main()
 {
+    printf("\r\n"); printf("\r\n"); printf("\r\n");
 //     TEST_JSON_OBJECT_READ_FALSE();
     TEST_JSON_OBJECT_READ_TRUE();
     

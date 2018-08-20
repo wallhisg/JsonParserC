@@ -7,7 +7,7 @@ void decoder_block(void *decompressAdd, void *compressedAdd);
 char get_ascii_coder(char c);
 char get_ascii_decoder(char c);
 
-char *json_compress_ascii(char* rawStr)
+char *json_compress_ascii(char *rawStr)
 {
     // coder
     int len = strlen(rawStr);
@@ -34,7 +34,7 @@ char *json_compress_ascii(char* rawStr)
     return asciiCom;
 }
 
-char * json_decompress_ascii(char* codedStr)
+char *json_decompress_ascii(char *codedStr)
 {
     // decompress ascii code
     int len = strlen(codedStr);
@@ -188,5 +188,3 @@ char get_ascii_decoder(char c)
 
     return result;
 }
-
-
