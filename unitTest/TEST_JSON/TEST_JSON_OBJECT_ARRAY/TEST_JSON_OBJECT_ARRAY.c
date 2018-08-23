@@ -10,24 +10,24 @@ void TEST_JSON_OBJECT_ARRAY_TRUE()
     // init values to write
     // Object
 
-    char *objWrite2 = "{\"a\":\"1\",\"bc\":\"2\"}\n";
+    char *objWrite2 = "{\"a\":\"1\",\"bc\":\"2\"}\r\n";
     WRITE_TO_BUFFER(objWrite2);
 
-    char *objWrite3 = "{\"A\":\"123\",\"V\":{\"B\":\"45\"},\"C\":[\"d\",\"e\"]}\n";
+    char *objWrite3 = "{\"A\":\"123\",\"V\":{\"B\":\"45\"}}\r\n";
     WRITE_TO_BUFFER(objWrite3);
 
-    char *objWrite4 = "{\"V\":[\"B\",\"45\"],\"C\":[\"d\",\"e\"]}\n";
-    WRITE_TO_BUFFER(objWrite4);
+//    char *objWrite4 = "{\"V\":[\"B\",\"45\"],\"C\":[\"d\",\"e\"]}\n";
+//    WRITE_TO_BUFFER(objWrite4);
 
-    char *objWrite5 = "{\"X\":\"67\",\"Y\":{\"89\":\"12\"},\"Z\":[\"X\",\"Y\"]}\n";
-    WRITE_TO_BUFFER(objWrite5);
+//    char *objWrite5 = "{\"X\":\"67\",\"Y\":{\"89\":\"12\"},\"Z\":[\"X\",\"Y\"]}\n";
+//    WRITE_TO_BUFFER(objWrite5);
     
-
     Buffer *buff = get_json_buffer();
-    printf("BUFFER after value");
     buffer_print(buff);
-    printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
+
     JSON_TEST_CASE();
+    display_heap();
+    printf("BUFFER after byte used: %d\r\n", buffer_bytes_used(buff));
 }
 
 void TEST_JSON_OBJECT_ARRAY_TRUE_2()
@@ -79,7 +79,7 @@ int main()
     printf("---------- TEST_JSON_OBJECT ----------\r\n");
     system_init();
     json_init();
-
+    printf("SIZEOF JSONVALUE: %lu\r\n", sizeof(JsonValues));
     TEST_JSON_OBJECT_ARRAY_TRUE();
 //     TEST_JSON_OBJECT_ARRAY_TRUE_2();
 //   TEST_JSON_OBJECT_FALSE();

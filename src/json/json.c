@@ -1,5 +1,6 @@
 #include <json/json.h>
 #include <string.h>
+#include <json/json_list.h>
 
 #define JSON_BUFFER_LENGTH       128
 
@@ -13,6 +14,9 @@ void json_init()
     jsonBuff.size = JSON_BUFFER_LENGTH;
     jsonBuff.head = jsonBuff.tail = jsonBuff.buffer;
     buffer_reset(&jsonBuff);
+    
+//     json_list_init();
+    
 }
 
 Buffer *get_json_buffer()

@@ -55,14 +55,9 @@ typedef struct JsonConsume{
     struct JsonConsume (*nextTok)(const char, struct JsonConsume *);
 } JsonConsume;
 
-typedef struct {
-    JsonType type;
-    char *key;
-    char *value;
-} JsonValue;
 
 typedef struct {
-    char *key;
+    char *name;
     char *value;
 } JsonObject;
 

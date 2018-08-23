@@ -1,7 +1,7 @@
 #include <driver/buffer.h>
 
 
-#define UART_RX_BUFFER_LENGTH   256
+#define UART_RX_BUFFER_LENGTH   192
 #define UART_TX_BUFFER_LENGTH   64
 
 static char UART_RX_BUFFER[UART_RX_BUFFER_LENGTH];

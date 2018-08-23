@@ -82,7 +82,7 @@ char *TEST_DECODER_BLOCK(char *inBuff)
 int main()
 {
     system_init();
-    char *src = "123\n";
+    char *src = "{\"jsonrpc\":\"2.0\",\"method\":\"subtract\",\"params\":[42,23],\"id\":1}\n";
     int len = strlen(src);
 
 

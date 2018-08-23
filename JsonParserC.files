@@ -8,6 +8,7 @@ include/driver/buffer_ring.h
 include/json/json.h
 include/json/json.h
 include/json/json_compress.h
+include/json/json_list.h
 include/json/json_parser.h
 include/json/json_parser.h
 include/json/json_parser_object.h
@@ -26,6 +27,7 @@ src/driver/buffer_ring.c
 src/driver/uart/ring_buffer.c
 src/json/json.c
 src/json/json_compress.c
+src/json/json_list.c
 src/json/json_parser.c
 src/json/json_parser_object.c
 src/json/json_reader.c
@@ -36,6 +38,7 @@ src/system_init.c
 unitTest/TEST_JSON/TEST_JSON_ARRAY/TEST_JSON_ARRAY.c
 unitTest/TEST_JSON/TEST_JSON_ARRAY/xmodule.mk
 unitTest/TEST_JSON/TEST_JSON_CODER_DECODER/TEST_JSON_CODER_DECODER.c
+unitTest/TEST_JSON/TEST_JSON_FUNCTIONS/TEST_JSON_FUNCTIONS.c
 unitTest/TEST_JSON/TEST_JSON_OBJECT/TEST_JSON_OBJECT.c
 unitTest/TEST_JSON/TEST_JSON_OBJECT/xmodule.mk
 unitTest/TEST_JSON/TEST_JSON_OBJECT_ARRAY/TEST_JSON_OBJECT_ARRAY.c

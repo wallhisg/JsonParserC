@@ -326,6 +326,7 @@ JsonConsume tok_right_curly(const char c, JsonConsume *objConsume)
 
             if(consume->state == JSON_STATE_VALUE_END) {
                 consume->state = JSON_END;
+//                consume->tribool = TRIBOOL_INDETERMINATE;
                 consume->tribool = TRIBOOL_TRUE;
             }
             else

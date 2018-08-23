@@ -92,6 +92,28 @@ uint16_t buffer_read_bytes(char *result, Buffer *buff)
     return numBytesRead;
 }
 
+char *buffer_read_bytes_with_control_letter(Buffer *buff, char ctrlLetter)
+{
+    uint16_t numBytesRead = 0;
+    numBytesRead = buffer_bytes_used(buff);
+    char *ret = (char *)buffer_malloc(numBytesRead * sizeof(char));
+    numBytesRead = 0;
+    while (numBytesRead < buff->size)
+    {
+        if (buff->status == RING_STATUS_EMPTY)
+            break;
+        else
+        {
+            ret[numBytesRead] = buffer_read_one_byte(buff);
+            if(ret[numBytesRead] == ctrlLetter)
+                break;
+
+            numBytesRead++;
+        }
+    }
+
+    return ret;
+}
 const uint16_t buffer_bytes_used(const Buffer *buff)
 {
     uint16_t bytesUsed = 0;

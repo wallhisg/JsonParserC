@@ -1,11 +1,9 @@
 #ifndef JSON_READ_H
 #define JSON_READ_H
 
+#include <json/json_list.h>
 #include "json_parser.h"
 
-JsonConsume json_read_frame(Buffer *inBuff);
-JsonValue json_read_value(Buffer *inBuff, JsonConsume *jsonConsume);
-
-void json_read_sub_value();
+JsonValues *json_parser(Buffer *buff);
 
 #endif  //  JSON_READ_H

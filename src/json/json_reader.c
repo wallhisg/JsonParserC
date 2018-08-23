@@ -1,122 +1,48 @@
 #include <json/json_reader.h>
 #include <driver/buffer_alloc.h>
 
-#define JSON_KEY_LENGTH     8
+#define JSON_NAME_LENGTH     8
 #define JSON_VALUE_LENGTH   32
 
-char jName[JSON_KEY_LENGTH];
+char jName[JSON_NAME_LENGTH];
 char jValue[JSON_VALUE_LENGTH];
 
 extern JsonConsume tok_letter_start(const char c, JsonConsume objConsume);
-JsonObject get_json_object_value(char *jsonStr);
-static void json_value_init();
 
-JsonConsume json_read_frame(Buffer *inBuff)
+static void json_value_init();
+char *json_get_header(char *jsonStr, JsonConsume *jsonConsume);
+JsonValues *json_get_payload(JsonValues *head, char *jsonStr, JsonConsume *jsonConsume);
+static JsonValues *json_value_wrapper(JsonType type, char *name, char *value);
+
+JsonValues *json_parser(Buffer *buff)
 {
-    // parser json input string
     JsonConsume consume;
     json_consume_init(&consume);
     consume.nextTok = (void *)tok_letter_start;
-    JsonValue jsonValue = {0};
-    
-    while(buffer_bytes_used(inBuff) > 0)
+
+    char *jsonStr = (char *)buffer_read_bytes_with_control_letter(buff, LF);
+    char *jsonstrOld = jsonStr;
+    printf("JSON STRING: %s\r\n", jsonStr);
+
+    json_value_init();
+
+    jsonStr = json_get_header(jsonStr, &consume);
+    JsonValues *jsonValue = NULL;
+
+    // read json header
+    if((consume.tribool == TRIBOOL_TRUE) && (consume.type != JSON_TYPE_UNDEFINED))
     {
-        memset(&jsonValue, 0, sizeof(JsonValue));
-        jsonValue = json_read_value(inBuff, &consume);
-        if((consume.tribool == TRIBOOL_TRUE) && consume.state != JSON_END)
-        {
-            switch(consume.type)
-            {
-                case JSON_TYPE_STRING:
-                {
-                    printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n",
-                           jsonValue.type,
-                           jsonValue.key,
-                           jsonValue.value);
-                    buffer_free(jsonValue.key);
-                    buffer_free(jsonValue.value);
-                    break;
-                }
-                case JSON_TYPE_OBJECT:
-                {
-                    printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n",
-                           jsonValue.type,
-                           jsonValue.key,
-                           jsonValue.value);
-//                    JsonConsume sc;
-//                    json_consume_init(&sc);
-//                    sc.nextTok = (void *)tok_letter_start;
-//                    char data;
-//                    // parser Object
-//                    int i = 0;
-//                    for(i = 0; i < strlen(jsonValue.value); ++i)
-//                    {
-//                        data = jsonValue.value[i];
-////                        printf("DATA %c\r\n", data);
-//                        sc = consume_char(data, &sc);
-//                        if(sc.state == JSON_STATE_NAME)
-//                        {
-//                            printf("SUB KEY: %c\r\n", data);
-//                        }
-//                        else if(sc.state == JSON_STATE_VALUE_STR_BEGIN)
-//                        {
-//                            printf("SUB VALUE: %c\r\n", data);
-//                        }
-//                    }
-
-                    buffer_free(jsonValue.key);
-                    buffer_free(jsonValue.value);
-                    break;
-                }
-                case JSON_TYPE_ARRAY:
-                {
-                    printf("\tJSON_TYPE: %d \tKEY: %s \t\tVALUE: %s\r\n",
-                           jsonValue.type,
-                           jsonValue.key,
-                           jsonValue.value);
-
-//                    JsonConsume sc;
-//                    json_consume_init(&sc);
-//                    sc.nextTok = (void *)tok_letter_start;
-//                    sc.state = JSON_STATE_NAME_BEGIN;
-//                    sc.type = JSON_TYPE_STRING;
-//                    char data;
-//                    // parser Object
-//                    int i = 0;
-//                    for(i = 0; i < strlen(jsonValue.value); ++i)
-//                    {
-//                        data = jsonValue.value[i];
-////                        printf("DATA %c\r\n", data);
-//                        sc = consume_char(data, &sc);
-//                        if(sc.state == JSON_STATE_NAME)
-//                        {
-////                            printf("SUB KEY: %c\r\n", data);
-//                        }
-//                        else if(sc.state == JSON_STATE_NAME_END)
-//                        {
-////                            printf("SUB VALUE: %c\r\n", data);
-//                        }
-//                    }
-                    buffer_free(jsonValue.key);
-                    buffer_free(jsonValue.value);
-                    break;
-                }
-                default:
-                    break;
-            }
-            if(buffer_bytes_used(inBuff) < 3)
-            {
-                buffer_consume(inBuff, LF);
-                break;
-            }
-        }
+        jsonValue = json_value_wrapper(consume.type, jName, jValue);
     }
-    printf("buffer_bytes_used: %d\r\n", buffer_bytes_used(inBuff));
-//    display_heap();
-    return consume;
+
+    // read json payload
+    jsonValue = json_get_payload(jsonValue, jsonStr, &consume);
+    display_heap();
+    buffer_free(jsonstrOld);
+    return jsonValue;
 }
 
-JsonValue json_read_value(Buffer *inBuff, JsonConsume *jsonConsume)
+char *json_get_header(char *jsonStr, JsonConsume *jsonConsume)
 {
     json_value_init();
 
@@ -125,38 +51,34 @@ JsonValue json_read_value(Buffer *inBuff, JsonConsume *jsonConsume)
     int idxVal = 0;
     char byte;
 
-    int byteUsed = buffer_bytes_used(inBuff);
+    int len = strlen(jsonStr);
     int i = 0;
-    for(i = 0; i < byteUsed; ++i)
+    for(i = 0; i < len; ++i)
     {
-        byte = buffer_read_one_byte(inBuff);
+        byte = *jsonStr;
+        jsonStr++;
         consume = consume_char(byte, jsonConsume);
         if(consume.tribool == TRIBOOL_TRUE)
         {
+            // read name
             if(consume.state == JSON_STATE_NAME)
             {
                 jName[idxKey++] = byte;
             }
-            else if((consume.state == JSON_STATE_VALUE_STR_BEGIN) ||
-                    (consume.state == JSON_STATE_VALUE_OBJECT_BEGIN) ||
-                    (consume.state == JSON_STATE_VALUE_ARRAY_BEGIN))
+
+            if(consume.state == JSON_STATE_VALUE_STRING)
             {
                 jValue[idxVal++] = byte;
             }
-            else if((consume.state == JSON_STATE_VALUE_STR_END) ||
-                    (consume.state == JSON_STATE_VALUE_OBJECT_END) ||
-                    (consume.state == JSON_STATE_VALUE_ARRAY_END))
+            if(consume.state == JSON_STATE_VALUE_STR_END)
             {
-                jValue[idxVal++] = byte;
+                printf("BREAK\r\n");
+                break;
             }
-            else if((consume.state == JSON_STATE_VALUE_STRING) ||
-                    (consume.state == JSON_STATE_VALUE_OBJECT) ||
-                    (consume.state == JSON_STATE_VALUE_ARRAY))
+            if((consume.state == JSON_END) || (byte == LF))
             {
-                jValue[idxVal++] = byte;
-            }
-            else if((consume.state == JSON_STATE_VALUE_END) || (byte == LF))
-            {
+                error("Json string incorrect");
+                consume.tribool = TRIBOOL_FALSE;
                 break;
             }
         }
@@ -164,74 +86,95 @@ JsonValue json_read_value(Buffer *inBuff, JsonConsume *jsonConsume)
         {
             printf("Fatal error: input string wrong at %d - %c\r\n", i, byte);
             consume.tribool = TRIBOOL_FALSE;
-            buffer_consume(inBuff, LF);
             break;
         }
     }
 
-    JsonValue jsonValue;
-    if((consume.tribool == TRIBOOL_TRUE) && (consume.type != JSON_TYPE_UNDEFINED))
-    {
-        size_t nameLen = strlen(jName);
-        jsonValue.key = (char *)buffer_malloc(nameLen * sizeof(char));
-        memcpy(jsonValue.key, jName, nameLen);
-        
-        size_t valLen = strlen(jValue);
-        jsonValue.value = (char *)buffer_malloc(valLen * sizeof(char));
-        memcpy(jsonValue.value, jValue, valLen);
-        
-        jsonValue.type = consume.type;
-    }
-
-    return jsonValue;
+    return jsonStr;
 }
 
-JsonObject get_json_object_value(char *jsonStr)
+JsonValues *json_get_payload(JsonValues *head, char *jsonStr, JsonConsume *jsonConsume)
 {
-    JsonObject jsonObj = {0};
-    JsonConsume consume;
     json_value_init();
-    json_consume_init(&consume);
-
-    consume.nextTok = (void *)tok_letter_start;
-
+    JsonValues *jsonValue = NULL;
+    JsonConsume *consume = jsonConsume;
+    int idxKey = 0;
+    int idxVal = 0;
     char byte;
-    size_t len = strlen(jsonStr);
 
+    int len = strlen(jsonStr);
     int i = 0;
     for(i = 0; i < len; ++i)
     {
         byte = jsonStr[i];
-        consume = consume_char(byte, &consume);
-        if(consume.tribool == TRIBOOL_TRUE)
+        *consume = consume_char(byte, jsonConsume);
+        if(consume->tribool == TRIBOOL_TRUE)
         {
-            if(consume.state == JSON_STATE_NAME)
+            // read name
+            if(consume->state == JSON_STATE_NAME)
             {
-//                printf("SUB KEY: %c\r\n", byte);
+                jName[idxKey++] = byte;
             }
-            else if(consume.state == JSON_STATE_VALUE_STR_BEGIN)
+
+            if((consume->state == JSON_STATE_VALUE_STRING) ||
+                (consume->state == JSON_STATE_VALUE_OBJECT) ||
+                (consume->state == JSON_STATE_VALUE_ARRAY))
             {
-//                printf("SUB VALUE: %c\r\n", byte);
+                jValue[idxVal++] = byte;
             }
-            else if((consume.state == JSON_STATE_VALUE_END) || (byte == LF))
+            if((consume->state == JSON_STATE_VALUE_STR_END) ||
+                (consume->state == JSON_STATE_VALUE_OBJECT_END) ||
+                (consume->state == JSON_STATE_VALUE_ARRAY_END))
             {
-                break;
+                if((consume->tribool == TRIBOOL_TRUE) && (consume->type != JSON_TYPE_UNDEFINED))
+                {
+                    jsonValue = json_value_wrapper(consume->type, jName, jValue);
+                    jsonValue = insert_json_value_by_pointer(head, jsonValue);
+                }
+                json_value_init();
             }
         }
-        else if(consume.tribool == TRIBOOL_FALSE)
+        else if(consume->tribool == TRIBOOL_FALSE)
         {
             printf("Fatal error: input string wrong at %d - %c\r\n", i, byte);
-            consume.tribool = TRIBOOL_FALSE;
+            consume->tribool = TRIBOOL_FALSE;
             break;
         }
     }
 
-    return jsonObj;
+    return head;
+}
+static JsonValues *json_value_wrapper(JsonType type, char *name, char *value)
+{
+    JsonValues *jsonValue = (JsonValues *)buffer_malloc(sizeof(JsonValues));
+    size_t nameLen = strlen(name);
+    size_t valLen = strlen(value);
+    if(jsonValue != NULL)
+    {
+        jsonValue->name = (char *)buffer_malloc(nameLen * sizeof(char));
+        jsonValue->value = (char *)buffer_malloc(valLen * sizeof(char));
 
+        if(jsonValue->name != NULL && jsonValue->value != NULL)
+        {
+            memcpy(jsonValue->name, name, nameLen);
+            memcpy(jsonValue->value, value, valLen);
+            jsonValue->type = type;
+        }
+        else
+        {
+            buffer_free(jsonValue->name);
+            buffer_free(jsonValue->value);
+            jsonValue->type = JSON_TYPE_UNDEFINED;
+            buffer_free(jsonValue);
+
+            jsonValue = NULL;
+        }
+    }
+    return jsonValue;
 }
 
 static void json_value_init()
 {
-    memset(jName, 0, JSON_KEY_LENGTH);
+    memset(jName, 0, JSON_NAME_LENGTH);
     memset(jValue, 0, JSON_VALUE_LENGTH);
 }

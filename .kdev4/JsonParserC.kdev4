@@ -14,7 +14,7 @@ Name=GCC
 1=/home/wall/Dropbox/projects/JsonParserC/JsonParserC/include
 
 [Filters]
-size=45
+size=46
 
 [Filters][0]
 inclusive=0
@@ -216,6 +216,11 @@ inclusive=0
 pattern=TEST_JSON_CODER_DECODER_EXE
 targets=3
 
+[Filters][45]
+inclusive=0
+pattern=TEST_JSON_FUNCTIONS_EXE
+targets=3
+
 [Filters][5]
 inclusive=0
 pattern=.svn
@@ -242,7 +247,7 @@ pattern=.hg
 targets=2
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5,Launch Configuration 7
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5,Launch Configuration 7,Launch Configuration 6
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
@@ -363,6 +368,24 @@ Dependency Action=Nothing
 EnvironmentGroup=
 Executable=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
 External Terminal=make TEST_JSON_READ_EXE\s
+Project Target=
+Use External Terminal=true
+Working Directory=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
+isExecutable=true
+
+[Launch][Launch Configuration 6]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=TEST_JSON_FUNCTIONS_EXE
+Type=Native Application
+
+[Launch][Launch Configuration 6][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC
+External Terminal=make TEST_JSON_FUNCTIONS_EXE
 Project Target=
 Use External Terminal=true
 Working Directory=file:///home/wall/Dropbox/projects/JsonParserC/JsonParserC

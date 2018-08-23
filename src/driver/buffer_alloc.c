@@ -76,21 +76,23 @@ static void *buffer_alloc(memory_header *ptr, size_t size)
 
 void buffer_free(void* ptr)
 {
-    void *p = ptr;
-    p -= sizeof(memory_header);
-
-    memory_header *header = (memory_header *)p;
-    header->alloc = 0;
-
-    if(verify_header(header) != 0)
+    if(ptr != NULL)
     {
-        printf("buffer_free unlocated\r\n");
-    }
-    else
-    {
-        buffer_realloc(header);
-    }
+        void *p = ptr;
+        p -= sizeof(memory_header);
 
+        memory_header *header = (memory_header *)p;
+        header->alloc = 0;
+
+        if(verify_header(header) != 0)
+        {
+            printf("buffer_free unlocated\r\n");
+        }
+        else
+        {
+            buffer_realloc(header);
+        }
+    }
 }
 
 void buffer_refresh()
@@ -143,24 +145,60 @@ void buffer_realloc(void* ptr)
     }
 }
 
+#define VERIFY_DEBUG    1
 size_t verify_header(memory_header* header)
 {
     size_t result = 0;
 
    if(header == NULL)
        result = 1;
+   
+#if VERIFY_DEBUG
+    if(result)
+    {
+        printf("header == NULL\r\n");
+    }
+#endif
 
    if(header->alloc > 1)
         result = 1;
+   
+#if VERIFY_DEBUG
+    if(result)
+    {
+        printf("header->alloc > 1\r\n");
+    }
+#endif
 
    if(header->prev == header->next)
        result = 1;
+   
+#if VERIFY_DEBUG
+    if(result)
+    {
+        printf("header->prev == header->next\r\n");
+    }
+#endif
 
    if((void *)header < (void *)HEAP)
        result = 1;
+   
+#if VERIFY_DEBUG
+    if(result)
+    {
+        printf("(void *)header < (void *)HEAP\r\n");
+    }
+#endif
 
    if((void *)header > (void *)HEAP + HEAP_BUFFER_CONFIG_LENGTH)
         result = 1;
+   
+#if VERIFY_DEBUG
+    if(result)
+    {
+        printf("(void *)header > (void *)HEAP + HEAP_BUFFER_CONFIG_LENGTH\r\n");
+    }
+#endif
 
     return result;
 }
